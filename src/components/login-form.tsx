@@ -1,10 +1,12 @@
-import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Field, FieldLabel, FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+
 import { Button } from "./ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 
 const loginSchema = z.object({
   email: z.email("E-mail inválido").min(1, "O e-mail é obrigatório"),
