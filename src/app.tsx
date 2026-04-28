@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { Toaster } from "./components/ui/sonner";
 import Authentication from "./pages/auth";
+import HomePage from "./pages/home";
 
 const queryClient = new QueryClient();
 
@@ -12,7 +13,8 @@ export function App() {
       <Toaster theme="dark" />
       <BrowserRouter>
         <Routes>
-          <Route element={<Authentication />} index />
+          <Route element={<Authentication />} path="/authentication" />
+          <Route element={<HomePage />} path="/home" />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
