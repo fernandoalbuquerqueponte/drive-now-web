@@ -1,7 +1,17 @@
+import { useEffect } from "react";
+
 import LoginForm from "@/components/login-form";
+import SignUpForm from "@/components/sign-up-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function Authentication() {
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      window.location.href = "/home";
+    }
+  });
+
   return (
     <div className="flex h-screen w-screen items-center justify-center">
       <Tabs defaultValue="login" className="w-100">
@@ -10,7 +20,7 @@ function Authentication() {
           <TabsTrigger value="login">Login</TabsTrigger>
         </TabsList>
         <TabsContent value="create-account">
-          <div>Formulário de criação de conta para teste</div>
+          <SignUpForm />
         </TabsContent>
         <TabsContent value="login">
           <LoginForm />
