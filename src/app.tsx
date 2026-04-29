@@ -13,7 +13,7 @@ export function App() {
       <Toaster theme="dark" />
       <BrowserRouter>
         <Routes>
-          <Route element={<Authentication />} path="/authentication" />
+          <Route element={<Authentication />} path="/authentication" index />
           <Route element={<HomePage />} path="/home" />
         </Routes>
       </BrowserRouter>
