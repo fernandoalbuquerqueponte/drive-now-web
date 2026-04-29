@@ -15,7 +15,7 @@ export interface CarSpecification {
 export interface Car {
   brand: string;
   model: string;
-  category: string; // Você também pode usar um Union Type aqui, ex: 'Sedan' | 'SUV' | 'Hatch'
+  category: string;
   image: string;
   gallery: string[];
   year: number;
@@ -39,10 +39,21 @@ function HomePage() {
   }, [navigate]);
 
   return (
-    <div>
+    <div className="w-full">
       <Header />
       <div className="px-5">
-        <div className="container mx-auto w-screen py-20">
+        <div className="container mx-auto w-full py-20">
+          <div className="mb-16 flex w-full flex-col items-center gap-3 px-4 text-center">
+            {" "}
+            <h1 className="text-3xl leading-tight font-bold md:text-5xl">
+              Alugue o Carro dos Seus Sonhos
+            </h1>
+            <p className="text-muted-foreground max-w-2xl text-lg text-pretty md:text-xl">
+              Descubra nossa frota premium de veículos disponíveis para aluguel
+              por hora. Qualidade, conforto e segurança garantidos.
+            </p>
+          </div>
+
           <Card>
             <CardContent className="flex w-full flex-col">
               <FilterInput />
@@ -50,17 +61,15 @@ function HomePage() {
           </Card>
 
           {!isLoading && (
-            <div className="ml-10 w-full py-11">
+            <div className="w-full py-11 pl-10">
               <h3 className="text-2xl font-semibold">
                 {data?.length} veículos disponíveis
               </h3>
             </div>
           )}
-          <div className="grid grid-cols-1 justify-items-center gap-10 md:grid-cols-2 lg:grid-cols-3">
+          <div className="container mx-auto grid grid-cols-1 justify-items-center gap-10 pb-20 md:grid-cols-2 lg:grid-cols-3">
             {isLoading ? (
-              <div className="mx-auto flex w-full justify-center">
-                <h1 className="text-3xl">carregando...</h1>
-              </div>
+              <h1 className="text-3xl">Carregando...</h1>
             ) : (
               data?.map((item: Car) => <CarCard item={item} />)
             )}
