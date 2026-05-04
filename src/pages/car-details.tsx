@@ -1,4 +1,4 @@
-import { MapPin, Timer } from "lucide-react";
+import { MapPin, MessageCircle, Timer } from "lucide-react";
 import {
   Activity,
   Calendar,
@@ -11,8 +11,12 @@ import {
 import { useParams } from "react-router-dom";
 
 import Header from "@/components/header";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { useGetCarById } from "@/http/use-get-car-by-id";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -39,7 +43,7 @@ function CarDetailsPage() {
         className="mb-7 rounded-md object-contain"
       />
       <div className="px-5">
-        <div className="container flex w-full flex-col gap-3 rounded-2xl bg-zinc-900 px-8 py-7">
+        <div className="flex w-full flex-col gap-3 rounded-2xl bg-zinc-900 px-8 py-7">
           <Badge>{data?.category}</Badge>
           <h2 className="text-2xl font-bold">
             {data?.brand} {data?.model}
@@ -105,6 +109,47 @@ function CarDetailsPage() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 flex w-full flex-col gap-3 rounded-2xl bg-zinc-900 px-8 py-7">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <MessageCircle size={22} />
+              <h2 className="text-xl font-bold">Comentários</h2>
+            </div>
+            <Badge variant="secondary">{data?.reviews.length}</Badge>
+          </div>
+
+          <div className="mb-6 flex w-full flex-col gap-3 rounded-lg bg-zinc-800 p-5">
+            <h2 className="text-lg font-bold">Deixe sua avaliação</h2>
+            <Label className="text-md">Comentário</Label>
+            <Textarea placeholder="Conte sobre sua experiência com este veículo..." />
+            <Button size="lg">Enviar avaliação</Button>
+          </div>
+          <Separator />
+
+          {data?.reviews.map((review) => (
+            <div
+              key={review.id}
+              className="flex items-start gap-4 border-b p-4"
+            >
+              <Avatar className="h-13 w-13">
+                <AvatarImage src={review.user.imageUrl || ""} />
+                <AvatarFallback>
+                  {review.user.first_name[0]?.toUpperCase()}
+                  {review.user.last_name[0]?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="flex flex-col gap-1">
+                <p className="font-bold text-zinc-100 capitalize">
+                  {review.user.first_name.toLowerCase()}{" "}
+                  {review.user.last_name.toLowerCase()}
+                </p>
+                <p className="text-md text-zinc-400">{review.comment}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

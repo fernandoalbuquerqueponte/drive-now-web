@@ -1,5 +1,3 @@
-import type { PathString } from "react-hook-form";
-
 export interface UseGetCarByIdResponse {
   id: string;
   brand: string;
@@ -21,6 +19,23 @@ export interface UseGetCarByIdResponse {
     value: string;
     carId: string;
   }[];
-  reviews: string[];
-  CarImage: PathString[];
+  reviews: {
+    id: string;
+    carId: string;
+    userId: string;
+    user: {
+      id: string;
+      first_name: string;
+      last_name: string;
+      email: string;
+      imageUrl: string | null;
+      created_at: string;
+      updated_at: string;
+    };
+    rating: number;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  CarImage: string[];
 }
