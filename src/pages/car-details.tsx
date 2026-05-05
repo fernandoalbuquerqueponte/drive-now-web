@@ -1,22 +1,23 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import CarCommentSection from "@/components/car-comment-section";
 import CarDescription from "@/components/car-description";
+import { CarDetailsLoading } from "@/components/car-details-loading";
 import CarPriceDetails from "@/components/car-price-details";
 import Header from "@/components/header";
-import { Spinner } from "@/components/ui/spinner";
 import { useGetCarById } from "@/http/use-get-car-by-id";
 
 function CarDetailsPage() {
   const { id } = useParams();
-  const { data } = useGetCarById(id!);
+  const { data, isLoading } = useGetCarById(id!);
+  const navigate = useNavigate();
 
-  if (!id || !data) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Spinner className="size-8" />
-      </div>
-    );
+  if (isLoading || !data) {
+    return <CarDetailsLoading />;
+  }
+
+  if (!id) {
+    return navigate("home");
   }
 
   return (
