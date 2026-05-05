@@ -1,49 +1,94 @@
-import axios from "axios";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+
+interface FailedRequest {
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}
 
 export const api = axios.create({
   baseURL: "https://drive-now-tezp.onrender.com",
 });
 
+let isRefreshing = false;
+let failedQueue: FailedRequest[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 });
 
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
 
-      try {
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      return new Promise((resolve, reject) => {
         const storedRefreshToken = localStorage.getItem("refreshToken");
 
-        const response = await axios.patch(
-          "https://drive-now-tezp.onrender.com/api/users/refresh-token",
-          { refreshToken: storedRefreshToken },
-        );
+        axios
+          .patch(
+            "https://drive-now-tezp.onrender.com/api/users/refresh-token",
+            { refreshToken: storedRefreshToken },
+          )
+          .then((response) => {
+            const { accessToken, refreshToken } = response.data;
 
-        const { accessToken, refreshToken } = response.data;
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
 
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+            processQueue(null, accessToken);
 
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        return api(originalRequest);
-      } catch (err) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/";
-        return Promise.reject(err);
-      }
+            originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+            resolve(api(originalRequest));
+          })
+          .catch((err) => {
+            processQueue(err, null);
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+
+            if (window.location.pathname !== "/") {
+              window.location.href = "/";
+            }
+            reject(err);
+          })
+          .finally(() => {
+            isRefreshing = false;
+          });
+      });
     }
+
     return Promise.reject(error);
   },
 );

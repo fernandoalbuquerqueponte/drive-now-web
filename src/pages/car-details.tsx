@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { MapPin, MessageCircle, Timer } from "lucide-react";
 import {
   Activity,
@@ -8,15 +9,19 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
 
 import Header from "@/components/header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useCreateReview } from "@/http/use-create-review";
 import { useGetCarById } from "@/http/use-get-car-by-id";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -29,10 +34,36 @@ const iconMap: Record<string, React.ElementType> = {
   Seguro: ShieldCheck,
 };
 
+const addCommentForm = z.object({
+  comment: z.string().min(1, "O é comentário é obrigatório"),
+  rating: z.number().min(1).max(5),
+});
+
 function CarDetailsPage() {
   const { id } = useParams();
 
   const { data } = useGetCarById(id!);
+
+  const { mutateAsync: createCarReview } = useCreateReview(id!);
+
+  const form = useForm<z.infer<typeof addCommentForm>>({
+    resolver: zodResolver(addCommentForm),
+    defaultValues: {
+      comment: "",
+      rating: 1,
+    },
+  });
+
+  async function onSubmit({ comment, rating }: z.infer<typeof addCommentForm>) {
+    try {
+      await createCarReview({ comment, rating });
+      toast.success("Avaliação enviada com sucesso!");
+      form.reset({ comment: "", rating: 1 });
+    } catch (error) {
+      console.error("Erro ao criar conta:", error);
+      toast.error("Erro ao criar conta.");
+    }
+  }
   return (
     <div className="w-full">
       <Header />
@@ -120,11 +151,62 @@ function CarDetailsPage() {
             <Badge variant="secondary">{data?.reviews.length}</Badge>
           </div>
 
-          <div className="mb-6 flex w-full flex-col gap-3 rounded-lg bg-zinc-800 p-5">
-            <h2 className="text-lg font-bold">Deixe sua avaliação</h2>
-            <Label className="text-md">Comentário</Label>
-            <Textarea placeholder="Conte sobre sua experiência com este veículo..." />
-            <Button size="lg">Enviar avaliação</Button>
+          <div>
+            <form
+              action=""
+              onSubmit={form.handleSubmit(onSubmit)}
+              id="add-comment-form"
+              className="mb-6 flex w-full flex-col gap-3 rounded-lg bg-zinc-800 p-5"
+            >
+              {" "}
+              <h2 className="text-lg font-bold">Deixe sua avaliação</h2>
+              <Controller
+                name="rating"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel>Avaliação</FieldLabel>
+
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          type="button"
+                          key={star}
+                          onClick={() => field.onChange(star)}
+                          className={`text-2xl ${
+                            field.value >= star
+                              ? "text-yellow-400"
+                              : "text-zinc-500"
+                          }`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                  </Field>
+                )}
+              />
+              <Controller
+                name="comment"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Comentário</FieldLabel>
+                    <Textarea
+                      {...field}
+                      id={field.name}
+                      placeholder="Conte sobre sua experiência com este veículo..."
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Button type="submit" form="add-comment-form" size="lg">
+                Enviar avaliação
+              </Button>
+            </form>
           </div>
           <Separator />
 
