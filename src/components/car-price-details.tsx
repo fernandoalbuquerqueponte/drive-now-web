@@ -4,9 +4,10 @@ import BookingDateForm from "./booking-date-form";
 
 interface CarPriceDetailsProps {
   data: UseGetCarByIdResponse;
+  id: string;
 }
 
-function CarPriceDetails({ data }: CarPriceDetailsProps) {
+function CarPriceDetails({ data, id }: CarPriceDetailsProps) {
   return (
     <div className="flex w-full flex-col gap-3 rounded-2xl bg-zinc-900 px-10 py-10">
       <div className="flex flex-col gap-2">
@@ -21,7 +22,7 @@ function CarPriceDetails({ data }: CarPriceDetailsProps) {
         </span>
       </div>
 
-      <BookingDateForm carDetails={data} />
+      <BookingDateForm id={id} carDetails={data} />
     </div>
   );
 }

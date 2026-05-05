@@ -39,7 +39,7 @@ function CarDetailsPage() {
         </div>
 
         <aside className="mt-8 w-full lg:sticky lg:top-8 lg:mt-0 lg:w-100">
-          <CarPriceDetails data={data} />
+          <CarPriceDetails id={id} data={data} />
         </aside>
       </main>
     </div>

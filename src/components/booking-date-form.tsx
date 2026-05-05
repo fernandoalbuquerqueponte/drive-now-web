@@ -3,6 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useWatch } from "react-hook-form";
 import { z } from "zod";
 
+import { useCreateBookingCar } from "@/http/use-create-booking-car";
 import type { Car } from "@/pages/home";
 
 import DatePickerField from "./date-picker-field";
@@ -12,39 +13,42 @@ import { Separator } from "./ui/separator";
 
 type BookingDateFormProps = {
   carDetails: Car;
+  id: string;
 };
 
 const addCommentForm = z
   .object({
-    from: z.date(),
-    to: z.date(),
-    hours: z.number().optional(),
+    startDate: z.date(),
+    endDate: z.date(),
   })
-  .refine((data) => data.to >= data.from, {
+  .refine((data) => data.endDate > data.startDate, {
     message: "Data final deve ser maior que a inicial",
-    path: ["to"],
+    path: ["endDate"],
   });
 
-export default function BookingDateForm({ carDetails }: BookingDateFormProps) {
+export default function BookingDateForm({
+  carDetails,
+  id,
+}: BookingDateFormProps) {
+  const { mutate: createBooking } = useCreateBookingCar(id);
   const form = useForm<z.infer<typeof addCommentForm>>({
     resolver: zodResolver(addCommentForm),
     defaultValues: {
-      from: undefined,
-      to: undefined,
+      startDate: undefined,
+      endDate: undefined,
     },
   });
 
   const from = useWatch({
     control: form.control,
-    name: "from",
+    name: "startDate",
   });
 
   const to = useWatch({
     control: form.control,
-    name: "to",
+    name: "endDate",
   });
 
-  console.log("price:", carDetails.pricePerHour);
   const days =
     from && to && to >= from
       ? Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24))
@@ -52,10 +56,13 @@ export default function BookingDateForm({ carDetails }: BookingDateFormProps) {
 
   const subtotal = days * carDetails.pricePerHour * 24;
 
-  async function onSubmit(data: z.infer<typeof addCommentForm>) {
+  async function onSubmit(values: z.infer<typeof addCommentForm>) {
     try {
-      // await createCarReview({ comment, rating });
-      console.log(data);
+      createBooking({
+        startDate: values.startDate.toISOString(),
+        endDate: values.endDate.toISOString(),
+      });
+      console.log("reservado");
       form.reset();
     } catch (error) {
       console.error("Erro ao criar conta:", error);
@@ -66,7 +73,7 @@ export default function BookingDateForm({ carDetails }: BookingDateFormProps) {
       <form id="date-range" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex items-center justify-between gap-2">
           <Controller
-            name="from"
+            name="startDate"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -88,7 +95,7 @@ export default function BookingDateForm({ carDetails }: BookingDateFormProps) {
           />
 
           <Controller
-            name="to"
+            name="endDate"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
