@@ -1,32 +1,11 @@
-import { MapPin, Timer } from "lucide-react";
-import {
-  Activity,
-  Calendar,
-  Fuel,
-  Settings,
-  ShieldCheck,
-  Users,
-  Zap,
-} from "lucide-react";
 import { useParams } from "react-router-dom";
 
-import BookingDateForm from "@/components/booking-date-form";
 import CarCommentSection from "@/components/car-comment-section";
+import CarDescription from "@/components/car-description";
+import CarPriceDetails from "@/components/car-price-details";
 import Header from "@/components/header";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetCarById } from "@/http/use-get-car-by-id";
-
-const iconMap: Record<string, React.ElementType> = {
-  Motor: Activity,
-  Transmissão: Settings,
-  Combustível: Fuel,
-  Lugares: Users,
-  Ano: Calendar,
-  Potência: Zap,
-  Seguro: ShieldCheck,
-};
 
 function CarDetailsPage() {
   const { id } = useParams();
@@ -53,97 +32,13 @@ function CarDetailsPage() {
               className="mb-7 h-150 w-full rounded-md object-cover"
             />
           </section>
-          <div className="flex w-full flex-col gap-3 rounded-2xl bg-zinc-900 px-8 py-7">
-            <Badge>{data?.category}</Badge>
-            <h2 className="text-2xl font-bold">
-              {data?.brand} {data?.model}
-            </h2>
 
-            <div className="flex items-center gap-4">
-              <div className="text-muted-foreground flex gap-2">
-                <MapPin size={20} />
-                Sobral, CE
-              </div>
-
-              <div className="text-muted-foreground flex gap-2">
-                <Timer size={20} />
-                Disponível agora
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-6 pb-6">
-              <div className="flex items-center gap-3 text-zinc-300">
-                <Calendar size={22} className="text-zinc-500" />
-                <span className="font-medium">{data?.year}</span>
-              </div>
-
-              {data?.specifications?.map((spec) => {
-                const Icon = iconMap[spec.label] || Activity;
-                return (
-                  <div
-                    key={spec.id}
-                    className="flex items-center gap-3 text-zinc-300"
-                  >
-                    <Icon size={22} className="text-zinc-500" />
-                    <span className="font-medium">{spec.value}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <Separator />
-
-            <div className="flex flex-col gap-3 pt-7">
-              <h2 className="text-2xl font-bold">Sobre este veículo</h2>
-
-              <p>{data?.description}</p>
-            </div>
-
-            <div className="flex flex-col gap-4 pt-4">
-              <h3 className="text-xl font-bold">Especificações</h3>
-
-              <div className="flex flex-col gap-2">
-                {data?.specifications.map((specification) => (
-                  <div className="flex w-full items-center justify-between">
-                    <p>{specification.label}:</p>
-                    <p>{specification.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="w-full pt-5">
-              <h3 className="text-xl font-bold">Recursos inclusos</h3>
-              <div className="grid w-full grid-cols-2 pt-5">
-                {data?.features.map((feature) => (
-                  <p>- {feature}</p>
-                ))}
-              </div>
-            </div>
-          </div>
-
+          <CarDescription data={data} />
           <CarCommentSection id={id} data={data} />
         </div>
 
         <aside className="mt-8 w-full lg:sticky lg:top-8 lg:mt-0 lg:w-100">
-          <div className="flex w-full flex-col gap-3 rounded-2xl bg-zinc-900 px-10 py-10">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-4xl font-bold text-blue-500">
-                R$ {data?.pricePerHour}{" "}
-                <span className="text-muted-foreground text-lg font-normal">
-                  / hora
-                </span>
-              </h1>
-              <span className="text-md text-muted-foreground">
-                R$ {data?.pricePerHour ? data.pricePerHour * 24 : 0}/dia
-              </span>
-            </div>
-
-            {data ? (
-              <BookingDateForm carDetails={data} />
-            ) : (
-              <p>Carregando...</p>
-            )}
-          </div>
+          <CarPriceDetails data={data} />
         </aside>
       </main>
     </div>
