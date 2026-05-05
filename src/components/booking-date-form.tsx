@@ -1,11 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import { z } from "zod";
+
+import type { Car } from "@/pages/home";
 
 import DatePickerField from "./date-picker-field";
 import { Button } from "./ui/button";
 import { Field, FieldLabel } from "./ui/field";
 import { Separator } from "./ui/separator";
+
+type BookingDateFormProps = {
+  carDetails: Car;
+};
 
 const addCommentForm = z
   .object({
@@ -18,7 +25,7 @@ const addCommentForm = z
     path: ["to"],
   });
 
-export default function BookingDateForm() {
+export default function BookingDateForm({ carDetails }: BookingDateFormProps) {
   const form = useForm<z.infer<typeof addCommentForm>>({
     resolver: zodResolver(addCommentForm),
     defaultValues: {
@@ -26,6 +33,24 @@ export default function BookingDateForm() {
       to: undefined,
     },
   });
+
+  const from = useWatch({
+    control: form.control,
+    name: "from",
+  });
+
+  const to = useWatch({
+    control: form.control,
+    name: "to",
+  });
+
+  console.log("price:", carDetails.pricePerHour);
+  const days =
+    from && to && to >= from
+      ? Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24))
+      : 0;
+
+  const subtotal = days * carDetails.pricePerHour * 24;
 
   async function onSubmit(data: z.infer<typeof addCommentForm>) {
     try {
@@ -89,15 +114,21 @@ export default function BookingDateForm() {
           <Separator className="" />
           <div className="flex w-full justify-between">
             <span>Subtotal:</span>
-            <span>R$ 4320</span>
+            <span>
+              {" "}
+              R${" "}
+              {subtotal.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+              })}
+            </span>
           </div>
           <div className="flex w-full justify-between">
             <span>Taxa de serviço:</span>
-            <span>R$ 4320</span>
+            <span>R$ 0,00</span>
           </div>
           <div className="flex w-full justify-between">
             <span>Seguro:</span>
-            <span>R$ 4320</span>
+            <span>R$ 0,00</span>
           </div>
           <Separator className="mt-2 mb-2" />
           <div className="flex w-full justify-between font-bold text-white">
