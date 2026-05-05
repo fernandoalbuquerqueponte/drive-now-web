@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import BookingDateForm from "@/components/booking-date-form";
 import Header from "@/components/header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -232,6 +233,22 @@ function CarDetailsPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-8 flex w-full flex-col gap-3 rounded-2xl bg-zinc-900 px-10 py-10">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-4xl font-bold text-blue-500">
+              R$ {data?.pricePerHour}{" "}
+              <span className="text-muted-foreground text-lg font-normal">
+                / hora
+              </span>
+            </h1>
+            <span className="text-md text-muted-foreground">
+              R$ {data?.pricePerHour ? data.pricePerHour * 24 : 0}/dia
+            </span>
+          </div>
+
+          <BookingDateForm />
         </div>
       </div>
     </div>
