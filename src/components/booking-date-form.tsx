@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { useCreateBookingCar } from "@/http/use-create-booking-car";
@@ -39,6 +41,8 @@ export default function BookingDateForm({
     },
   });
 
+  const navigate = useNavigate();
+
   const from = useWatch({
     control: form.control,
     name: "startDate",
@@ -58,12 +62,25 @@ export default function BookingDateForm({
 
   async function onSubmit(values: z.infer<typeof addCommentForm>) {
     try {
-      createBooking({
-        startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString(),
-      });
-      console.log("reservado");
-      form.reset();
+      createBooking(
+        {
+          startDate: values.startDate.toISOString(),
+          endDate: values.endDate.toISOString(),
+        },
+        {
+          onSuccess() {
+            form.reset();
+            navigate("/bookings");
+            toast.success("Reserva realizada com sucesso!");
+          },
+          onError: (error) => {
+            console.error("Erro na reserva:", error);
+            toast.error(
+              "Não foi possível concluir a reserva. Tente novamente.",
+            );
+          },
+        },
+      );
     } catch (error) {
       console.error("Erro ao criar conta:", error);
     }
