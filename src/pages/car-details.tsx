@@ -17,7 +17,8 @@ function CarDetailsPage() {
   }
 
   if (!id) {
-    return navigate("home");
+    navigate("home");
+    return null;
   }
 
   return (
