@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { useCreateBookingCar } from "@/http/use-create-booking-car";
+import { useGetBookingsByCarId } from "@/http/use-get-bookings-by-car-id";
 import type { Car } from "@/pages/home";
 
 import DatePickerField from "./date-picker-field";
@@ -33,6 +34,9 @@ export default function BookingDateForm({
   id,
 }: BookingDateFormProps) {
   const { mutate: createBooking } = useCreateBookingCar(id);
+
+  const { data: bookedRanges } = useGetBookingsByCarId(id);
+
   const form = useForm<z.infer<typeof addCommentForm>>({
     resolver: zodResolver(addCommentForm),
     defaultValues: {
@@ -100,6 +104,10 @@ export default function BookingDateForm({
                   value={field.value}
                   onChange={field.onChange}
                   placeholder="Selecionar"
+                  disabled={[
+                    { before: new Date() }, // Impede datas passadas
+                    ...(bookedRanges || []), // Desabilita os intervalos já reservados
+                  ]}
                 />
 
                 {fieldState.error && (
@@ -122,6 +130,10 @@ export default function BookingDateForm({
                   value={field.value}
                   onChange={field.onChange}
                   placeholder="Selecionar"
+                  disabled={[
+                    { before: new Date() }, // Impede datas passadas
+                    ...(bookedRanges || []), // Desabilita os intervalos já reservados
+                  ]}
                 />
 
                 {fieldState.error && (

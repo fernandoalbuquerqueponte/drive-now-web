@@ -1,5 +1,6 @@
 import { format } from "date-fns/format";
 import { Calendar1 } from "lucide-react";
+import { type Matcher } from "react-day-picker";
 
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
@@ -9,12 +10,14 @@ interface DatePickerFieldProps {
   value?: Date;
   onChange: (date?: Date) => void;
   placeholder?: string;
+  disabled?: Matcher | Matcher[];
 }
 
 function DatePickerField({
   value,
   onChange,
   placeholder,
+  disabled,
 }: DatePickerFieldProps) {
   return (
     <Popover>
@@ -30,7 +33,12 @@ function DatePickerField({
       </PopoverTrigger>
 
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={value} onSelect={onChange} />
+        <Calendar
+          mode="single"
+          selected={value}
+          onSelect={onChange}
+          disabled={disabled}
+        />
       </PopoverContent>
     </Popover>
   );
