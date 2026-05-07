@@ -13,6 +13,8 @@ import {
   Zap,
 } from "lucide-react";
 
+import { useCreateCheckout } from "@/http/use-create-checkout";
+
 import type { BookingResponse } from "./booking-card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -32,6 +34,12 @@ interface BookingDetailsProps {
 }
 
 function BookingDetails({ booking }: BookingDetailsProps) {
+  const { mutate, isPending } = useCreateCheckout();
+
+  const handlePayment = () => {
+    mutate({ bookingId: booking.id });
+  };
+
   return (
     <div className="flex h-full flex-col px-4">
       <ScrollArea className="h-full flex-1">
@@ -201,9 +209,9 @@ function BookingDetails({ booking }: BookingDetailsProps) {
           </div>
         </div>
         <SheetFooter className="flex flex-col gap-3">
-          <Button size="lg">
+          <Button size="lg" onClick={handlePayment} disabled={isPending}>
             <CreditCardIcon />
-            Pagar reserva
+            {isPending ? "Processando..." : "Pagar Agora"}
           </Button>
           <Button size="lg" variant="destructive">
             <X />
