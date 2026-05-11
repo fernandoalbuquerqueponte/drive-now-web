@@ -12,7 +12,21 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useCancelBooking } from "@/http/use-cancel-booking";
 import { useCreateCheckout } from "@/http/use-create-checkout";
 
 import type { BookingResponse } from "./booking-card";
@@ -34,10 +48,15 @@ interface BookingDetailsProps {
 }
 
 function BookingDetails({ booking }: BookingDetailsProps) {
-  const { mutate, isPending } = useCreateCheckout();
+  const { mutateAsync: createCheckout, isPending } = useCreateCheckout();
+  const { mutateAsync: cancelBooking } = useCancelBooking(booking.id);
 
   const handlePayment = () => {
-    mutate({ bookingId: booking.id });
+    createCheckout({ bookingId: booking.id });
+  };
+
+  const handleCancelBooking = async () => {
+    await cancelBooking();
   };
 
   return (
@@ -213,10 +232,38 @@ function BookingDetails({ booking }: BookingDetailsProps) {
             <CreditCardIcon />
             {isPending ? "Processando..." : "Pagar Agora"}
           </Button>
-          <Button size="lg" variant="destructive">
-            <X />
-            Cancelar reserva
-          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="lg" variant="destructive">
+                <X />
+                Cancelar reserva
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader>
+                <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+                  <Trash2Icon />
+                </AlertDialogMedia>
+                <AlertDialogTitle>Delete reserva?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  A reserva será excluída permanentemente. Esta ação não pode
+                  ser desfeita.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel variant="outline">
+                  Cancelar
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={handleCancelBooking}
+                >
+                  Deletar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </SheetFooter>
       </ScrollArea>
     </div>

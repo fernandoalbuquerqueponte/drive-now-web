@@ -7,11 +7,8 @@ import { useGetBookingsByUserId } from "@/http/use-get-bookings-by-user-id";
 function CarBookingTabs() {
   const { data: bookings } = useGetBookingsByUserId();
 
-  console.log(bookings);
-
-  const now = new Date();
-
   const filterBookings = useMemo(() => {
+    const now = new Date();
     if (!bookings) return { active: [], cancelled: [], history: [] };
     return {
       active: bookings.filter(
@@ -25,7 +22,7 @@ function CarBookingTabs() {
   }, [bookings]);
 
   return (
-    <Tabs defaultValue="account" className="w-250">
+    <Tabs defaultValue="active" className="w-250">
       <TabsList variant="line" className="flex w-full items-center">
         <TabsTrigger value="active">Reservas Ativas</TabsTrigger>
         <TabsTrigger value="cancelled">Reservas Canceladas</TabsTrigger>
