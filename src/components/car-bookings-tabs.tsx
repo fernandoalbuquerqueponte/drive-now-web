@@ -1,12 +1,28 @@
 import { useMemo } from "react";
 
-import BookingCard from "@/components/booking-card";
+import BookingCard, { type BookingStatus } from "@/components/booking-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useGetBookingsByUserId } from "@/http/use-get-bookings-by-user-id";
+import type { Car } from "@/pages/home";
 
-function CarBookingTabs() {
-  const { data: bookings } = useGetBookingsByUserId();
+export interface BookingResponse {
+  id: string;
+  carId: string;
+  userId: string;
+  startDate: string;
+  endDate: string;
+  totalHours: number;
+  totalPrice: number;
+  status: BookingStatus;
+  createdAt: string;
+  updatedAt: string;
+  car: Car;
+}
 
+interface CarBookingTabsProps {
+  bookings: BookingResponse[];
+}
+
+function CarBookingTabs({ bookings }: CarBookingTabsProps) {
   const filterBookings = useMemo(() => {
     const now = new Date();
     if (!bookings) return { active: [], cancelled: [], history: [] };
@@ -23,7 +39,7 @@ function CarBookingTabs() {
 
   return (
     <Tabs defaultValue="active" className="w-250">
-      <TabsList variant="line" className="flex w-full items-center">
+      <TabsList className="flex w-full items-center">
         <TabsTrigger value="active">Reservas Ativas</TabsTrigger>
         <TabsTrigger value="cancelled">Reservas Canceladas</TabsTrigger>
         <TabsTrigger value="historic">Histórico</TabsTrigger>
