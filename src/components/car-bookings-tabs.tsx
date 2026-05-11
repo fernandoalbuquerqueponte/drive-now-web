@@ -1,8 +1,20 @@
+import { Car, HomeIcon } from "lucide-react";
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 
 import BookingCard, { type BookingStatus } from "@/components/booking-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Car } from "@/pages/home";
+import type { Car as CarInterface } from "@/pages/home";
+
+import { Button } from "./ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "./ui/empty";
 
 export interface BookingResponse {
   id: string;
@@ -15,7 +27,7 @@ export interface BookingResponse {
   status: BookingStatus;
   createdAt: string;
   updatedAt: string;
-  car: Car;
+  car: CarInterface;
 }
 
 interface CarBookingTabsProps {
@@ -46,19 +58,91 @@ function CarBookingTabs({ bookings }: CarBookingTabsProps) {
       </TabsList>
 
       <TabsContent value="active" className="mt-6 flex flex-col gap-6">
-        {filterBookings.active.map((booking) => (
-          <BookingCard booking={booking} />
-        ))}
+        {filterBookings.active.length > 0 ? (
+          filterBookings.active.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} />
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Empty className="bg-muted/30 h-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Car />
+                </EmptyMedia>
+                <EmptyTitle>Sem carros por aqui</EmptyTitle>
+                <EmptyDescription className="max-w-xs text-pretty">
+                  Nenhum carro encontrado.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Link to="/home">
+                  <Button variant="outline">
+                    <HomeIcon />
+                    Adicionar reserva
+                  </Button>
+                </Link>
+              </EmptyContent>
+            </Empty>
+          </div>
+        )}
       </TabsContent>
       <TabsContent value="cancelled" className="mt-6 flex flex-col gap-6">
-        {filterBookings.cancelled.map((booking) => (
-          <BookingCard booking={booking} />
-        ))}
+        {filterBookings.cancelled.length > 0 ? (
+          filterBookings.cancelled.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} />
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Empty className="bg-muted/30 h-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Car />
+                </EmptyMedia>
+                <EmptyTitle>Sem carros por aqui</EmptyTitle>
+                <EmptyDescription className="max-w-xs text-pretty">
+                  Nenhum carro encontrado.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Link to="/home">
+                  <Button variant="outline">
+                    <HomeIcon />
+                    Adicionar reserva
+                  </Button>
+                </Link>
+              </EmptyContent>
+            </Empty>
+          </div>
+        )}
       </TabsContent>
       <TabsContent value="historic" className="mt-6 flex flex-col gap-6">
-        {filterBookings.history.map((booking) => (
-          <BookingCard booking={booking} />
-        ))}
+        {filterBookings.history.length > 0 ? (
+          filterBookings.history.map((booking) => (
+            <BookingCard key={booking.id} booking={booking} />
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Empty className="bg-muted/30 h-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Car />
+                </EmptyMedia>
+                <EmptyTitle>Sem carros por aqui</EmptyTitle>
+                <EmptyDescription className="max-w-xs text-pretty">
+                  Nenhum carro encontrado.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Link to="/home">
+                  <Button variant="outline">
+                    <HomeIcon />
+                    Adicionar reserva
+                  </Button>
+                </Link>
+              </EmptyContent>
+            </Empty>
+          </div>
+        )}
       </TabsContent>
     </Tabs>
   );
