@@ -1,5 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Calendar, Car, LogOutIcon, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 function Header() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const handleLogout = () => {
+    // 1. Limpa os tokens
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    // 2. Limpa o cache do React Query
+    // (Isso evita que o próximo usuário veja os dados do antigo por um segundo)
+    queryClient.clear();
+
+    // 3. Manda para a tela de login ou home
+    navigate("/authentication");
+  };
   return (
     <div className="flex w-full items-center justify-around border border-zinc-900 bg-transparent py-5">
       <Link to="/home">
@@ -58,7 +74,7 @@ function Header() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOutIcon />
               Sign Out
             </DropdownMenuItem>
