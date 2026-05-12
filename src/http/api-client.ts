@@ -58,10 +58,9 @@ api.interceptors.response.use(
         const storedRefreshToken = localStorage.getItem("refreshToken");
 
         axios
-          .patch(
-            "https://drive-now-tezp.onrender.com/api/users/refresh-token",
-            { refreshToken: storedRefreshToken },
-          )
+          .post("https://drive-now-tezp.onrender.com/api/users/refresh-token", {
+            refreshToken: storedRefreshToken,
+          })
           .then((response) => {
             const { accessToken, refreshToken } = response.data;
 
