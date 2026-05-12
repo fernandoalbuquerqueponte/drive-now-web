@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import CarCard from "@/components/car-card";
 import FilterInput from "@/components/filter-input";
 import Header from "@/components/header";
+import { Spinner } from "@/components/ui/spinner";
 import { useCars } from "@/http/use-cars";
 
 export interface CarSpecification {
@@ -84,9 +85,11 @@ function HomePage() {
             </h3>
           </div>
         )}
-        <div className="container mx-auto grid grid-cols-1 justify-items-center gap-10 pb-20 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 justify-items-center gap-10 pb-20 md:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
-            <h1 className="text-3xl">Carregando...</h1>
+            <div className="col-span-full flex min-h-100 w-full items-center justify-center">
+              <Spinner className="size-7" />
+            </div>
           ) : (
             data?.map((item: Car) => <CarCard item={item} />)
           )}
