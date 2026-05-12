@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { Toaster } from "./components/ui/sonner";
@@ -14,16 +15,21 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster theme="dark" />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/authentication" replace />} />
-          <Route element={<Authentication />} path="/authentication" index />
-          <Route element={<HomePage />} path="/home" />
-          <Route element={<CarDetailsPage />} path="/car/:id" />
-          <Route element={<BookingsPage />} path="/bookings" />
-          <Route element={<MyAccountPage />} path="/account" />
-        </Routes>
-      </BrowserRouter>
+      <NuqsAdapter>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to="/authentication" replace />}
+            />
+            <Route element={<Authentication />} path="/authentication" index />
+            <Route element={<HomePage />} path="/home" />
+            <Route element={<CarDetailsPage />} path="/car/:id" />
+            <Route element={<BookingsPage />} path="/bookings" />
+            <Route element={<MyAccountPage />} path="/account" />
+          </Routes>
+        </BrowserRouter>
+      </NuqsAdapter>
     </QueryClientProvider>
   );
 }
