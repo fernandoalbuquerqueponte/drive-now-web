@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 
 function HeaderProfile({ user }: any) {
-  console.log(user);
+  // console.log(user);
   return (
     <Card>
       <CardContent className="w-full space-y-5 p-0">
