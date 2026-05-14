@@ -1,5 +1,6 @@
 import { Car, MessageCircle, User } from "lucide-react";
 
+import CarListCard from "@/components/car-list-card";
 import Header from "@/components/header";
 import HeaderProfile from "@/components/header-profile";
 import PersonalDataCard from "@/components/personal-data-card";
@@ -40,8 +41,10 @@ function MyAccountPage() {
               <TabsContent value="account">
                 <PersonalDataCard user={data} />
               </TabsContent>
-              <TabsContent value="password">
-                Change your password here.
+              <TabsContent value="my-cars">
+                {data?.cars.map((car) => {
+                  return <CarListCard key={car.id} car={car} />;
+                })}
               </TabsContent>
             </Tabs>
           </div>
