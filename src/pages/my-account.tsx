@@ -1,17 +1,19 @@
 import { Car, MessageCircle, User } from "lucide-react";
 
-import CarListCard from "@/components/car-list-card";
 import Header from "@/components/header";
 import HeaderProfile from "@/components/header-profile";
+import MyCarsProfileTabsSection from "@/components/my-cars-profile-tabs-section";
+import MyCommentsProfileTabsSection from "@/components/my-comments-profile-tabs-section";
 import PersonalDataCard from "@/components/personal-data-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetUser } from "@/http/use-get-user";
 
 function MyAccountPage() {
-  const { data, isLoading, isError } = useGetUser();
+  const { data } = useGetUser();
 
-  if (isLoading) return <p>Carregando perfil...</p>;
-  if (isError) return <p>Erro ao carregar perfil. Faça login novamente.</p>;
+  if (!data) {
+    return null;
+  }
 
   return (
     <>
@@ -42,9 +44,11 @@ function MyAccountPage() {
                 <PersonalDataCard user={data} />
               </TabsContent>
               <TabsContent value="my-cars">
-                {data?.cars.map((car) => {
-                  return <CarListCard key={car.id} car={car} />;
-                })}
+                <MyCarsProfileTabsSection cars={data.cars} />
+              </TabsContent>
+
+              <TabsContent value="comments">
+                <MyCommentsProfileTabsSection reviews={data.reviews} />
               </TabsContent>
             </Tabs>
           </div>

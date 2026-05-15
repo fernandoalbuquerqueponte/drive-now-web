@@ -6,6 +6,7 @@ export interface Review {
   comment: string;
   createdAt: string;
   updatedAt: string;
+  car: Car;
 }
 
 export interface Booking {
