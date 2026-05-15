@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 
+import CarAnalyticsCard from "@/components/car-analytics-card";
 import CarStats from "@/components/car-stats";
 import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,12 @@ function MyCarsPage() {
 
         <div className="flex items-center justify-center gap-5">
           <CarStats cars={data.cars} />
+        </div>
+
+        <div className="grid w-full grid-cols-3 gap-5 py-20">
+          {data.cars.map((c) => (
+            <CarAnalyticsCard car={c} key={c.id} />
+          ))}
         </div>
       </div>
     </>
