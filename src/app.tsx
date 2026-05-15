@@ -8,6 +8,7 @@ import BookingsPage from "./pages/bookings";
 import CarDetailsPage from "./pages/car-details";
 import HomePage from "./pages/home";
 import MyAccountPage from "./pages/my-account";
+import MyCarsPage from "./pages/my-cars";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ export function App() {
             <Route element={<CarDetailsPage />} path="/car/:id" />
             <Route element={<BookingsPage />} path="/bookings" />
             <Route element={<MyAccountPage />} path="/account" />
+            <Route element={<MyCarsPage />} path="/my-cars" />
           </Routes>
         </BrowserRouter>
       </NuqsAdapter>
