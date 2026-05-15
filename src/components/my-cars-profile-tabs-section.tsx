@@ -5,6 +5,7 @@ import type { Car as CarInterface } from "@/http/types/use-edit-user-profile-res
 
 import CarListCard from "./car-list-card";
 import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface MyCarsSectionProps {
   cars: CarInterface[];
@@ -27,9 +28,13 @@ export default function MyCarsProfileTabsSection({ cars }: MyCarsSectionProps) {
           </Button>
         </Link>
       </div>
-      {cars.map((c) => (
-        <CarListCard key={c.id} car={c} />
-      ))}
+      <ScrollArea className="h-150 w-full">
+        <div className="flex flex-col gap-6">
+          {cars.map((c) => (
+            <CarListCard key={c.id} car={c} />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 }

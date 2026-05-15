@@ -20,7 +20,7 @@ function MyAccountPage() {
       <Header />
 
       <div className="container mx-auto w-full py-9">
-        <div className="mx-auto w-200 space-y-9">
+        <div className="mx-auto max-w-220 space-y-9 px-5">
           <HeaderProfile user={data} />
 
           {/* TABS */}
