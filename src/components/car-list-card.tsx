@@ -34,12 +34,11 @@ function CarListCard({ car }: { car: CarInterface }) {
             <div className="flex items-center gap-4">
               <div className="text-muted-foreground flex items-center gap-2">
                 <Car size={16} />
-                <p className="text-xs">42 aluguéis</p>
+                <p className="text-xs">{car.bookings.length} aluguéis</p>
               </div>
               <div className="flex items-center gap-2 text-green-500/90">
                 <TrendingUpIcon size={16} />
                 <p className="text-xs">
-                  {" "}
                   {Number(bookingTotalRevenue).toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",
