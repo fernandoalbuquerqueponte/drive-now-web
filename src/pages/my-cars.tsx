@@ -3,8 +3,15 @@ import { Plus } from "lucide-react";
 import CarStats from "@/components/car-stats";
 import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
+import { useGetUser } from "@/http/use-get-user";
 
 function MyCarsPage() {
+  const { data } = useGetUser();
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <>
       <Header />
@@ -25,7 +32,7 @@ function MyCarsPage() {
         </div>
 
         <div className="flex items-center justify-center gap-5">
-          <CarStats />
+          <CarStats cars={data.cars} />
         </div>
       </div>
     </>
