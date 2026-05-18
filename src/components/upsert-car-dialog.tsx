@@ -2,9 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +12,12 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCreateCar } from "@/http/use-create-car";
 import { useUpdateCar } from "@/http/use-update-car";
+import { type CarFormSchema, carFormSchema } from "@/schemas/car-form-schema";
 
+import { CarGalleryInput } from "./car-gallery-input";
+import { CarImageInput } from "./car-image-input";
 import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import {
@@ -26,41 +28,6 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Separator } from "./ui/separator";
-
-const carFormSchema = z.object({
-  brand: z.string().trim().min(1, { message: "Marca é obrigatória." }),
-  model: z.string().trim().min(1, { message: "Modelo é obrigatório." }),
-  category: z.string().trim().min(1, { message: "Categoria é obrigatória." }),
-  image: z.instanceof(File, { message: "A imagem principal é obrigatória." }),
-  year: z.coerce.number().int().min(1900, "Ano inválido"),
-  pricePerHour: z.coerce
-    .number()
-    .min(0, { message: "O preço deve ser maior ou igual a zero" }),
-  description: z.string().min(10, { message: "Mínimo de 10 caracteres." }),
-  available: z.boolean().default(true),
-  gallery: z
-    .instanceof(FileList, { message: "Selecione as fotos da galeria." })
-    .refine(
-      (files) => files.length > 0,
-      "Adicione pelo menos uma foto na galeria.",
-    ),
-  specifications: z
-    .array(
-      z.object({
-        label: z.string(),
-        value: z.string().min(1, "O valor é obrigatório"),
-      }),
-    )
-    .default([]),
-  features: z
-    .array(
-      z.object({
-        value: z.string().min(1, "A característica não pode estar vazia"),
-      }),
-    )
-    .default([]),
-});
-type CarFormSchema = z.infer<typeof carFormSchema>;
 
 interface UpsertCarDialogProps {
   isOpen: boolean;
@@ -227,32 +194,7 @@ function EditCarForm({
                 )}
               />
 
-              <Controller
-                name="image"
-                control={form.control}
-                render={({
-                  field: { onChange, onBlur, name, ref },
-                  fieldState,
-                }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="image-file">
-                      Imagem Principal do Veículo
-                    </FieldLabel>
-                    <Input
-                      id="image-file"
-                      name={name}
-                      onBlur={onBlur}
-                      ref={ref}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => onChange(e.target.files?.[0])}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+              <CarImageInput control={form.control} />
 
               <Controller
                 name="description"
@@ -317,33 +259,7 @@ function EditCarForm({
                 />
               </div>
 
-              <Controller
-                name="gallery"
-                control={form.control}
-                render={({
-                  field: { onChange, onBlur, name, ref },
-                  fieldState,
-                }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="gallery-file">
-                      Galeria de Imagens (Selecione várias fotos juntos)
-                    </FieldLabel>
-                    <Input
-                      id="gallery-file"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      name={name}
-                      onBlur={onBlur}
-                      ref={ref}
-                      onChange={(e) => onChange(e.target.files)}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+              <CarGalleryInput control={form.control} />
 
               <Card className="bg-secondary/20 border-slate-800">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 py-3">
