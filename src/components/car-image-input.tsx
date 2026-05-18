@@ -1,11 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pencil, Plus } from "lucide-react";
 import { type Control, Controller, useWatch } from "react-hook-form";
+
+import { type CarFormSchema } from "@/schemas/car-form-schema";
 
 import { Field, FieldError, FieldLabel } from "../components/ui/field";
 import { Input } from "../components/ui/input";
 
-export function CarImageInput({ control }: { control: Control<any> }) {
+export function CarImageInput({
+  control,
+}: {
+  control: Control<CarFormSchema>;
+}) {
   const watchedImage = useWatch({ control, name: "image" });
 
   return (

@@ -1,15 +1,37 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus, Trash2 } from "lucide-react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Loader2 } from "lucide-react";
+import React from "react";
+import {
+  Controller,
+  type Resolver,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 
 import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor,
+} from "@/components/ui/combobox";
+import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { CAR_CATEGORIES, carFeatures } from "@/constants/car";
 import { useCreateCar } from "@/http/use-create-car";
 import { useUpdateCar } from "@/http/use-update-car";
 import { type CarFormSchema, carFormSchema } from "@/schemas/car-form-schema";
@@ -17,7 +39,6 @@ import { type CarFormSchema, carFormSchema } from "@/schemas/car-form-schema";
 import { CarGalleryInput } from "./car-gallery-input";
 import { CarImageInput } from "./car-image-input";
 import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import {
@@ -27,13 +48,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Separator } from "./ui/separator";
 
 interface UpsertCarDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   carId?: string;
-  defaultValues?: any;
+  defaultValues?: CarFormSchema;
 }
 
 function EditCarForm({
@@ -45,8 +65,10 @@ function EditCarForm({
   const { mutateAsync: createCar, isPending } = useCreateCar();
   const { mutateAsync: updateCar } = useUpdateCar();
 
-  const form = useForm({
-    resolver: zodResolver(carFormSchema),
+  const anchor = useComboboxAnchor();
+
+  const form = useForm<CarFormSchema>({
+    resolver: zodResolver(carFormSchema) as Resolver<CarFormSchema>,
     defaultValues: defaultValues ?? {
       brand: "",
       model: "",
@@ -61,27 +83,16 @@ function EditCarForm({
         { label: "Motor", value: "" },
         { label: "Potência", value: "" },
         { label: "Transmissão", value: "" },
+        { label: "Combustível", value: "" },
+        { label: "Direção", value: "" },
       ],
       features: [],
     },
   });
 
-  const {
-    fields: specFields,
-    append: appendSpec,
-    remove: removeSpec,
-  } = useFieldArray({
+  const { fields: specFields } = useFieldArray({
     control: form.control,
     name: "specifications",
-  });
-
-  const {
-    fields: featureFields,
-    append: appendFeature,
-    remove: removeFeature,
-  } = useFieldArray({
-    control: form.control,
-    name: "features",
   });
 
   async function onSubmit(data: CarFormSchema) {
@@ -95,12 +106,16 @@ function EditCarForm({
       formData.append("year", String(data.year));
       formData.append("pricePerHour", String(data.pricePerHour));
       formData.append("available", String(data.available));
-      formData.append("image", data.image);
       formData.append("specifications", JSON.stringify(data.specifications));
       formData.append("features", JSON.stringify(data.features));
-      Array.from(data.gallery).forEach((file) => {
-        formData.append("gallery", file);
-      });
+      if (data.image instanceof File) {
+        formData.append("image", data.image);
+      }
+      if (data.gallery && data.gallery instanceof FileList) {
+        Array.from(data.gallery).forEach((file) => {
+          formData.append("gallery", file);
+        });
+      }
 
       if (carId) {
         await updateCar({ carId, formData });
@@ -117,10 +132,20 @@ function EditCarForm({
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-4xl!">
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+          if (!open) {
+            form.reset();
+          }
+        }}
+      >
+        <DialogTrigger asChild></DialogTrigger>
+        <DialogContent className="max-w-2xl!">
           <DialogHeader>
             <DialogTitle>{carId ? "Editar carro" : "Criar carro"}</DialogTitle>
+            <DialogDescription>Insira as informações abaixo</DialogDescription>
           </DialogHeader>
 
           <ScrollArea className="-mr-3 max-h-[70vh] pr-3">
@@ -129,7 +154,7 @@ function EditCarForm({
               onSubmit={form.handleSubmit(onSubmit, (errors) =>
                 console.log("O formulário está inválido!", errors),
               )}
-              className="space-y-5 pb-2"
+              className="space-y-8"
             >
               <Controller
                 name="brand"
@@ -182,9 +207,11 @@ function EditCarForm({
                         <SelectValue placeholder="Selecione a categoria" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="esportivo">Esportivo</SelectItem>
-                        <SelectItem value="suv">SUV</SelectItem>
-                        <SelectItem value="sedan">Sedan</SelectItem>
+                        {CAR_CATEGORIES.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     {fieldState.invalid && (
@@ -261,148 +288,118 @@ function EditCarForm({
 
               <CarGalleryInput control={form.control} />
 
-              <Card className="bg-secondary/20 border-slate-800">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 py-3">
-                  <CardTitle className="text-muted-foreground text-sm font-medium">
-                    Especificações Técnicas
-                  </CardTitle>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-8 gap-1"
-                    onClick={() => appendSpec({ label: "", value: "" })}
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Adicionar Especificação
-                  </Button>
-                </CardHeader>
-                <Separator />
-                <CardContent className="space-y-4 p-4">
-                  {specFields.map((fieldItem, index) => (
-                    <div key={fieldItem.id} className="flex items-start gap-3">
-                      <Controller
-                        name={`specifications.${index}.label` as const}
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                          <Field
-                            data-invalid={fieldState.invalid}
-                            className="w-1/3"
-                          >
-                            <Input {...field} placeholder="Ex: Motor" />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
+              {specFields.map((fieldItem, index) => (
+                <div key={fieldItem.id} className="flex w-full items-end gap-3">
+                  <Controller
+                    name={`specifications.${index}.value` as const}
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid} className="grow">
+                        <FieldLabel>{fieldItem.label}</FieldLabel>
 
-                      <Controller
-                        name={`specifications.${index}.value` as const}
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                          <Field
-                            data-invalid={fieldState.invalid}
-                            className="grow"
-                          >
-                            <Input
-                              {...field}
-                              placeholder="Ex: 4.0 V8, 450cv..."
-                            />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
-                            )}
-                          </Field>
-                        )}
-                      />
+                        <div className="flex items-center gap-2">
+                          <Input
+                            {...field}
+                            id={field.name}
+                            placeholder={
+                              fieldItem.label
+                                ? `Digite o/a ${fieldItem.label.toLowerCase()}...`
+                                : "Digite o valor..."
+                            }
+                          />
+                        </div>
 
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:bg-destructive/10"
-                        onClick={() => removeSpec(index)}
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                </div>
+              ))}
+
+              <Controller
+                name="features"
+                control={form.control}
+                render={({ field, fieldState }) => {
+                  const selectedStrings = (field.value || [])
+                    .map((item) => {
+                      if (typeof item === "string") return item;
+                      return item?.value || "";
+                    })
+                    .filter(Boolean);
+                  return (
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="space-y-2"
+                    >
+                      <FieldLabel>Características Adicionais</FieldLabel>
+                      <Combobox
+                        multiple
+                        autoHighlight
+                        items={carFeatures}
+                        value={selectedStrings}
+                        onValueChange={(newValues) => {
+                          field.onChange(
+                            newValues.map((val) => ({ value: val })),
+                          );
+                        }}
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card className="bg-secondary/20 border-slate-800">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-slate-800 px-4 py-3">
-                  <CardTitle className="text-muted-foreground text-sm font-medium">
-                    Características Adicionais
-                  </CardTitle>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-8 gap-1"
-                    onClick={() => appendFeature({ value: "" })}
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Adicionar Característica
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-3 p-4">
-                  {featureFields.map((fieldItem, index) => (
-                    <div key={fieldItem.id} className="flex items-start gap-2">
-                      <Controller
-                        name={`features.${index}.value` as const}
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                          <Field
-                            data-invalid={fieldState.invalid}
-                            className="grow"
-                          >
-                            <Input
-                              {...field}
-                              placeholder="Ex: Teto Solar, Piloto Automático..."
-                            />
-                            {fieldState.invalid && (
-                              <FieldError errors={[fieldState.error]} />
+                        <ComboboxChips ref={anchor} className="w-full">
+                          <ComboboxValue>
+                            {(values) => (
+                              <React.Fragment>
+                                {values.map((value: string) => (
+                                  <ComboboxChip key={value}>
+                                    {value}
+                                  </ComboboxChip>
+                                ))}
+                                <ComboboxChipsInput />
+                              </React.Fragment>
                             )}
-                          </Field>
-                        )}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:bg-destructive/10"
-                        onClick={() => removeFeature(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  {featureFields.length === 0 && (
-                    <div className="text-muted-foreground py-2 text-center text-xs italic">
-                      Nenhuma característica adicionada.
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                          </ComboboxValue>
+                        </ComboboxChips>
+                        <ComboboxContent anchor={anchor}>
+                          <ComboboxEmpty>
+                            Nenhuma especificação encontrada
+                          </ComboboxEmpty>
+                          <ComboboxList>
+                            {(item) => (
+                              <ComboboxItem key={item} value={item}>
+                                {item}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
 
-              <Button
-                form="car-form"
-                type="submit"
-                className="mt-2 w-full"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                    Salvando...
-                  </>
-                ) : carId ? (
-                  "Salvar alterações"
-                ) : (
-                  "Criar veículo"
-                )}
-              </Button>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
             </form>
           </ScrollArea>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancelar
+              </Button>
+            </DialogClose>
+            <Button form="car-form" type="submit" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...
+                </>
+              ) : carId ? (
+                "Salvar alterações"
+              ) : (
+                "Criar veículo"
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

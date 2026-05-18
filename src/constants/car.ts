@@ -29,3 +29,14 @@ export const PRICE_RANGES = [
   { label: "R$ 100 - R$ 200/h", value: "100-200" },
   { label: "Acima de R$ 200/h", value: "200-plus" },
 ];
+
+export const carFeatures = [
+  "Ar-condicionado",
+  "Câmbio Automático",
+  "Central Multimídia",
+  "Câmera de Ré",
+  "Teto Solar",
+  "Bancos de Couro",
+  "Piloto Automático",
+  "Controle de Tração",
+] as const;

@@ -1,12 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Plus, Trash2 } from "lucide-react";
 import { type Control, Controller, useWatch } from "react-hook-form";
+
+import type { CarFormSchema } from "@/schemas/car-form-schema";
 
 import { Button } from "./ui/button";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 
-export function CarGalleryInput({ control }: { control: Control<any> }) {
+export function CarGalleryInput({
+  control,
+}: {
+  control: Control<CarFormSchema>;
+}) {
   const watchedGallery = useWatch({ control, name: "gallery" });
 
   const currentGalleryItems =
