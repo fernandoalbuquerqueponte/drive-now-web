@@ -9,6 +9,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import { useState } from "react";
 
 import type { Car as CarInterface } from "@/http/types/use-edit-user-profile-response";
 
@@ -16,6 +17,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";
+import EditCarForm from "./upsert-car-dialog";
 
 const getSpecIcon = (label: string) => {
   switch (label.toLowerCase()) {
@@ -37,6 +39,8 @@ const getSpecIcon = (label: string) => {
 };
 
 function CarAnalyticsCard({ car }: { car: CarInterface }) {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   const bookingTotalRevenue = car.bookings.reduce((sum, booking) => {
     return sum + booking.totalPrice;
   }, 0);
@@ -45,7 +49,7 @@ function CarAnalyticsCard({ car }: { car: CarInterface }) {
     <Card>
       <CardContent className="flex flex-col gap-3">
         <img
-          className="h-40 w-full object-cover"
+          className="h-80 w-full rounded-lg object-cover"
           src={car.image}
           alt={car.brand}
         />
@@ -105,10 +109,24 @@ function CarAnalyticsCard({ car }: { car: CarInterface }) {
               </h1>
               <span className="text-muted-foreground text-xs">/hora</span>
             </div>
-            <Button variant="secondary" size="sm">
-              <Pencil />
-              Editar
-            </Button>
+
+            <div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsEditOpen(true)}
+              >
+                <Pencil className="mr-2 h-4 w-4" />
+                Editar
+              </Button>
+
+              <EditCarForm
+                isOpen={isEditOpen}
+                setIsOpen={setIsEditOpen}
+                carId={car.id}
+                defaultValues={car}
+              />
+            </div>
           </div>
         </div>
       </CardContent>
