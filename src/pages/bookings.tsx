@@ -1,6 +1,5 @@
 import BookingStats from "@/components/booking-stats";
 import CarBookingTabs from "@/components/car-bookings-tabs";
-import Header from "@/components/header";
 import { useGetBookingsByUserId } from "@/http/use-get-bookings-by-user-id";
 
 function BookingsPage() {
@@ -12,8 +11,6 @@ function BookingsPage() {
 
   return (
     <>
-      <Header />
-
       <div className="w-full border-b bg-zinc-900/50">
         <div className="container mx-auto flex flex-col justify-items-start space-y-7 py-16 pt-16">
           <div className="space-y-3">

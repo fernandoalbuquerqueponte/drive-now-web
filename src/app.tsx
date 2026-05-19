@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import MainLayout from "./components/main-layout";
 import { Toaster } from "./components/ui/sonner";
 import Authentication from "./pages/auth";
 import BookingsPage from "./pages/bookings";
@@ -24,11 +25,14 @@ export function App() {
               element={<Navigate to="/authentication" replace />}
             />
             <Route element={<Authentication />} path="/authentication" index />
-            <Route element={<HomePage />} path="/home" />
-            <Route element={<CarDetailsPage />} path="/car/:id" />
-            <Route element={<BookingsPage />} path="/bookings" />
-            <Route element={<MyAccountPage />} path="/account" />
-            <Route element={<MyCarsPage />} path="/my-cars" />
+
+            <Route element={<MainLayout />}>
+              <Route element={<HomePage />} path="/home" />
+              <Route element={<CarDetailsPage />} path="/car/:id" />
+              <Route element={<BookingsPage />} path="/bookings" />
+              <Route element={<MyAccountPage />} path="/account" />
+              <Route element={<MyCarsPage />} path="/my-cars" />
+            </Route>
           </Routes>
         </BrowserRouter>
       </NuqsAdapter>

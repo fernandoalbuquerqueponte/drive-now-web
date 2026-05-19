@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import CarCard from "@/components/car-card";
 import FilterInput from "@/components/filter-input";
-import Header from "@/components/header";
 import { AuroraText } from "@/components/ui/aurora-text";
 import { Card, CardContent } from "@/components/ui/card";
 import { DotPattern } from "@/components/ui/dot-pattern";
@@ -66,8 +65,6 @@ function HomePage() {
 
   return (
     <div className="w-full">
-      <Header />
-
       <div className="relative my-auto flex min-h-150 flex-col items-center justify-center space-y-4 pt-6 md:h-145">
         <DotPattern
           className={cn(
@@ -130,7 +127,6 @@ function HomePage() {
           </Card>
         </div>
       </div>
-
       <div className="container mx-auto w-full px-5 py-20">
         <FilterInput filters={filters} onFilterChange={handleFilterChange} />
 
