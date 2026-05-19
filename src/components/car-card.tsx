@@ -27,20 +27,26 @@ const getSpecIcon = (label: string) => {
 
 function CarCard({ item }: { item: Car }) {
   return (
-    <Link to={`/car/${item.id}`}>
-      <Card className="group w-full max-w-87.5 overflow-hidden hover:shadow-lg">
-        <CardContent className="flex cursor-pointer items-center gap-5">
+    <Link to={`/car/${item.id}`} className="h-full w-full">
+      <Card className="h-full">
+        <CardContent className="flex cursor-pointer items-center">
           <div className="flex w-full flex-col gap-3">
-            <img src={item.image} alt="" className="min-h-full rounded-lg" />
+            <img
+              src={item.image}
+              alt={item.model}
+              className="h-48 w-full rounded-lg object-cover md:h-60"
+            />
             <Badge>{item.category}</Badge>
             <h3 className="text-lg font-bold">
               {item.brand} {item.model}
             </h3>
-            <div className="flex items-center gap-4">
-              {item.specifications.map((spec, index) => (
+            <div className="text-muted-foreground flex items-center gap-4 whitespace-nowrap">
+              {item.specifications.slice(0, 3).map((spec, index) => (
                 <div key={index} className="flex items-center gap-2">
                   {getSpecIcon(spec.label)}
-                  <span className="text-sm">{spec.label}</span>
+                  <span className="max-w-full truncate text-xs">
+                    {spec.label}
+                  </span>
                 </div>
               ))}
             </div>

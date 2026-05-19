@@ -68,7 +68,7 @@ function HomePage() {
     <div className="w-full">
       <Header />
 
-      <div className="relative flex min-h-125 flex-col items-center justify-center space-y-12 md:h-145">
+      <div className="relative my-auto flex min-h-150 flex-col items-center justify-center space-y-4 pt-6 md:h-145">
         <DotPattern
           className={cn(
             "mask-[radial-gradient(ellipse_at_center,white,transparent)]",
@@ -136,7 +136,7 @@ function HomePage() {
 
         {!isLoading && (
           <div className="w-full py-11 pl-10">
-            <h3 className="text-2xl font-semibold">
+            <h3 className="text-xl font-semibold">
               {data?.length} veículos disponíveis
             </h3>
           </div>
@@ -144,7 +144,7 @@ function HomePage() {
         <div className="grid grid-cols-1 justify-items-center gap-10 pb-20 md:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
             <div className="col-span-full flex min-h-100 w-full items-center justify-center">
-              <Spinner className="size-7" />
+              <Spinner className="size-5" />
             </div>
           ) : (
             data?.map((item: Car) => <CarCard key={item.id} item={item} />)
