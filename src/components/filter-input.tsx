@@ -31,32 +31,34 @@ interface FilterInputProps {
 
 function FilterInput({ filters, onFilterChange }: FilterInputProps) {
   return (
-    <Card>
-      <CardContent>
+    <Card className="w-full">
+      <CardContent className="space-y-6">
         <Input
+          className="h-10 w-full"
           placeholder="Buscar por modelo, marca ou categoria..."
           value={filters.search || ""}
           onChange={(e) => onFilterChange("search", e.target.value)}
         />
 
-        <div className="flex flex-col pt-6">
-          <div className="flex items-center gap-2">
-            <Filter size={17} />{" "}
-            <span className="text-md font-semibold">Filtro</span>
+        <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center">
+          <div className="text-muted-foreground flex shrink-0 items-center gap-2">
+            <Filter size={15} /> <span className="text-sm">Filtro</span>
           </div>
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             <Select
               value={filters.category || "all"}
               onValueChange={(v) => onFilterChange("category", v)}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Categoria" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   {CAR_CATEGORIES.map((item) => (
-                    <SelectItem value={item.value}>{item.label}</SelectItem>
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -66,13 +68,15 @@ function FilterInput({ filters, onFilterChange }: FilterInputProps) {
               value={filters.priceRange || "all"}
               onValueChange={(v) => onFilterChange("priceRange", v)}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Preço/hora" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   {PRICE_RANGES.map((item) => (
-                    <SelectItem value={item.value}>{item.label}</SelectItem>
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -82,13 +86,15 @@ function FilterInput({ filters, onFilterChange }: FilterInputProps) {
               value={filters.transmission || "all"}
               onValueChange={(v) => onFilterChange("transmission", v)}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Transmissão" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   {TRANSMISSION_TYPES.map((item) => (
-                    <SelectItem value={item.value}>{item.label}</SelectItem>
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -98,13 +104,15 @@ function FilterInput({ filters, onFilterChange }: FilterInputProps) {
               value={filters.fuel || "all"}
               onValueChange={(v) => onFilterChange("fuel", v)}
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Combustível" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   {FUEL_TYPES.map((item) => (
-                    <SelectItem value={item.value}>{item.label}</SelectItem>
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
