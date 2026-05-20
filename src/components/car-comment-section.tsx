@@ -1,11 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Plus } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
@@ -135,6 +144,30 @@ function CarCommentSection({ id, data }: CarCommentSectionProps) {
             </div>
           </div>
         ))}
+
+        <div className="mih-ful flex items-center justify-center">
+          {data?.reviews.length === 0 && (
+            <Empty className="bg-muted/30 h-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <MessageCircle />
+                </EmptyMedia>
+                <EmptyTitle>Lista de comentários vazia</EmptyTitle>
+                <EmptyDescription className="max-w-xs text-pretty">
+                  Você ainda não cadastrou nenhum comentário.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Link to="/home">
+                  <Button variant="outline" size="sm">
+                    <Plus />
+                    Cadastrar comentário
+                  </Button>
+                </Link>
+              </EmptyContent>
+            </Empty>
+          )}
+        </div>
       </ScrollArea>
     </div>
   );

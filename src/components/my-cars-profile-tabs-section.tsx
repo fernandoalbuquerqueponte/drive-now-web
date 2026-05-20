@@ -1,6 +1,14 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Car, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import type { Car as CarInterface } from "@/http/types/use-edit-user-profile-response";
 
 import CarListCard from "./car-list-card";
@@ -33,6 +41,28 @@ export default function MyCarsProfileTabsSection({ cars }: MyCarsSectionProps) {
           {cars.map((c) => (
             <CarListCard key={c.id} car={c} />
           ))}
+
+          {cars.length === 0 && (
+            <Empty className="bg-muted/30 h-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Car />
+                </EmptyMedia>
+                <EmptyTitle>Lista de carros vazia</EmptyTitle>
+                <EmptyDescription className="max-w-xs text-pretty">
+                  Você ainda não cadastrou nenhum carro.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Link to="/my-cars">
+                  <Button variant="outline" size="sm">
+                    <Plus />
+                    Cadastrar carro
+                  </Button>
+                </Link>
+              </EmptyContent>
+            </Empty>
+          )}
         </div>
       </ScrollArea>
     </div>

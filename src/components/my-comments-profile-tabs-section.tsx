@@ -1,6 +1,14 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageCircle, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import type { Review } from "@/http/types/use-edit-user-profile-response";
 
 import ReviewCarStats from "./review-car-stats";
@@ -36,6 +44,28 @@ export default function MyCommentsProfileTabsSection({
           {reviews.map((review) => (
             <ReviewCarStats key={review.id} review={review} />
           ))}
+
+          {reviews.length === 0 && (
+            <Empty className="bg-muted/30 h-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <MessageCircle />
+                </EmptyMedia>
+                <EmptyTitle>Lista de comentários vazia</EmptyTitle>
+                <EmptyDescription className="max-w-xs text-pretty">
+                  Você ainda não cadastrou nenhum comentário.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Link to="/home">
+                  <Button variant="outline" size="sm">
+                    <Plus />
+                    Cadastrar comentário
+                  </Button>
+                </Link>
+              </EmptyContent>
+            </Empty>
+          )}
         </div>
       </ScrollArea>
     </div>
