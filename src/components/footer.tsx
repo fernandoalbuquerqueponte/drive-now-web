@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="text-muted-foreground bg-primary-foreground flex h-20 items-center justify-between px-10 py-4 text-sm">
+    <footer className="text-muted-foreground bg-primary-foreground flex h-20 items-center justify-between px-10 py-4 text-sm">
       <h1 className="text-lg font-bold text-white">DriveNow</h1>
 
       <p className="text-sm">
@@ -26,6 +26,6 @@ export default function Footer() {
           GitHub
         </a>
       </div>
-    </div>
+    </footer>
   );
 }
