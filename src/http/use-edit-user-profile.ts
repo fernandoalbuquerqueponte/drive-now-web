@@ -4,12 +4,14 @@ import { toast } from "sonner";
 
 import { api } from "./api-client";
 
+type EditUserProfileInput = FormData | Record<string, any>;
+
 export function useEditUserProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
-      const response = await api.patch("/api/users", data);
+    mutationFn: async (formData: EditUserProfileInput) => {
+      const response = await api.patch("/api/users", formData);
       return response.data;
     },
     onSuccess(updatedUser) {

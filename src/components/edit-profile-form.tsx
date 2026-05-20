@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useEditUserProfile } from "@/http/use-edit-user-profile";
 
 import { Button } from "./ui/button";
+import { DialogFooter } from "./ui/dialog";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 
@@ -20,7 +21,7 @@ const editProfileForm = z
 
 interface EditProfileFormProps {
   data: any;
-  onSuccess: () => void; // Prop para fechar o modal
+  onSuccess: () => void;
 }
 
 function EditProfileForm({ data: user, onSuccess }: EditProfileFormProps) {
@@ -103,16 +104,18 @@ function EditProfileForm({ data: user, onSuccess }: EditProfileFormProps) {
             </Field>
           )}
         />
-        <Field orientation="horizontal">
-          <Button
-            className="w-full"
-            type="submit"
-            form="edit-profile"
-            size="lg"
-          >
-            Editar
-          </Button>
-        </Field>
+        <DialogFooter>
+          <Field orientation="horizontal">
+            <Button
+              className="w-full"
+              type="submit"
+              form="edit-profile"
+              size="lg"
+            >
+              Salvar alterações
+            </Button>
+          </Field>
+        </DialogFooter>
       </form>
     </div>
   );
