@@ -6,7 +6,7 @@ export const carFormSchema = z.object({
   category: z.string().trim().min(1, { message: "Categoria é obrigatória." }),
   image: z.union([
     z.instanceof(File, { message: "A imagem principal é obrigatória." }),
-    z.string().url(),
+    z.url(),
   ]),
   year: z.coerce.number().int().min(1900, "Ano inválido"),
   pricePerHour: z.coerce
@@ -15,11 +15,7 @@ export const carFormSchema = z.object({
   description: z.string().min(10, { message: "Mínimo de 10 caracteres." }),
   available: z.boolean().default(true),
   gallery: z
-    .union([
-      z.instanceof(FileList),
-      z.array(z.string().url()),
-      z.any(), // Fallback seguro caso sua versão trate FileList de forma estrita
-    ])
+    .union([z.instanceof(FileList), z.array(z.url()), z.any()])
     .optional(),
   specifications: z
     .array(
@@ -29,13 +25,7 @@ export const carFormSchema = z.object({
       }),
     )
     .default([]),
-  features: z
-    .array(
-      z.object({
-        value: z.string().min(1, "A característica não pode estar vazia"),
-      }),
-    )
-    .default([]),
+  features: z.array(z.string()),
 });
 
 export type CarFormSchema = z.infer<typeof carFormSchema>;

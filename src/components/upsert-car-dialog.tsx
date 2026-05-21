@@ -63,17 +63,17 @@ function EditCarForm({
   carId,
 }: UpsertCarDialogProps) {
   const { mutateAsync: createCar, isPending } = useCreateCar();
-  const { mutateAsync: updateCar } = useUpdateCar();
+  const { mutateAsync: updateCar, isPending: isUpdatePending } = useUpdateCar();
 
   const anchor = useComboboxAnchor();
 
   const form = useForm<CarFormSchema>({
     resolver: zodResolver(carFormSchema) as Resolver<CarFormSchema>,
-    defaultValues: defaultValues ?? {
+    values: defaultValues ?? {
       brand: "",
       model: "",
       category: "",
-      image: undefined,
+      image: "",
       year: new Date().getFullYear(),
       pricePerHour: 0,
       description: "",
@@ -86,7 +86,7 @@ function EditCarForm({
         { label: "Combustível", value: "" },
         { label: "Direção", value: "" },
       ],
-      features: [],
+      features: [] as string[],
     },
   });
 
@@ -322,12 +322,6 @@ function EditCarForm({
                 name="features"
                 control={form.control}
                 render={({ field, fieldState }) => {
-                  const selectedStrings = (field.value || [])
-                    .map((item) => {
-                      if (typeof item === "string") return item;
-                      return item?.value || "";
-                    })
-                    .filter(Boolean);
                   return (
                     <Field
                       data-invalid={fieldState.invalid}
@@ -338,11 +332,9 @@ function EditCarForm({
                         multiple
                         autoHighlight
                         items={carFeatures}
-                        value={selectedStrings}
+                        value={field.value}
                         onValueChange={(newValues) => {
-                          field.onChange(
-                            newValues.map((val) => ({ value: val })),
-                          );
+                          field.onChange(newValues);
                         }}
                       >
                         <ComboboxChips ref={anchor} className="w-full">
@@ -389,9 +381,9 @@ function EditCarForm({
               </Button>
             </DialogClose>
             <Button form="car-form" type="submit" disabled={isPending}>
-              {isPending ? (
+              {isPending || isUpdatePending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 </>
               ) : carId ? (
                 "Salvar alterações"
