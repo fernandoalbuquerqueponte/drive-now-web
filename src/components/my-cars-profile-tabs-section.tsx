@@ -25,10 +25,12 @@ export default function MyCarsProfileTabsSection({ cars }: MyCarsSectionProps) {
       <div className="flex items-center justify-between pt-7">
         <div className="flex flex-col gap-1">
           <h1 className="text-xl font-bold">Meus Carros</h1>
+
           <h3 className="text-muted-foreground text-sm">
             {cars.length} veículos cadastrados
           </h3>
         </div>
+
         <Link to="/my-cars">
           <Button variant="link" size="lg">
             Ver todos
@@ -36,8 +38,9 @@ export default function MyCarsProfileTabsSection({ cars }: MyCarsSectionProps) {
           </Button>
         </Link>
       </div>
+
       <ScrollArea className="h-150 w-full">
-        <div className="flex flex-col gap-6">
+        <div className="w-0 min-w-full space-y-6">
           {cars.map((c) => (
             <CarListCard key={c.id} car={c} />
           ))}
@@ -48,11 +51,14 @@ export default function MyCarsProfileTabsSection({ cars }: MyCarsSectionProps) {
                 <EmptyMedia variant="icon">
                   <Car />
                 </EmptyMedia>
+
                 <EmptyTitle>Lista de carros vazia</EmptyTitle>
+
                 <EmptyDescription className="max-w-xs text-pretty">
                   Você ainda não cadastrou nenhum carro.
                 </EmptyDescription>
               </EmptyHeader>
+
               <EmptyContent>
                 <Link to="/my-cars">
                   <Button variant="outline" size="sm">

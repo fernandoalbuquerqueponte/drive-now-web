@@ -1,8 +1,17 @@
 import { z } from "zod";
 
 export const carFormSchema = z.object({
-  brand: z.string().trim().min(1, { message: "Marca é obrigatória." }),
-  model: z.string().trim().min(1, { message: "Modelo é obrigatório." }),
+  brand: z
+    .string()
+    .trim()
+    .min(1, { message: "Marca é obrigatória." })
+    .max(15, { message: "Máximo 15 caracteres." }),
+
+  model: z
+    .string()
+    .trim()
+    .min(1, { message: "Modelo é obrigatório." })
+    .max(15, { message: "Máximo 15 caracteres." }),
   category: z.string().trim().min(1, { message: "Categoria é obrigatória." }),
   image: z.union([
     z.instanceof(File, { message: "A imagem principal é obrigatória." }),
