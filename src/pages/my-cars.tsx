@@ -17,7 +17,7 @@ function MyCarsPage() {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-5">
       <div className="flex w-full items-center justify-between py-11">
         <div className="flex flex-col items-start gap-1">
           <h1 className="text-3xl font-bold">Meus Carros</h1>
@@ -36,11 +36,11 @@ function MyCarsPage() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-5">
+      <div className="">
         <CarStats cars={data.cars} />
       </div>
 
-      <div className="grid w-full grid-cols-3 gap-5 py-20">
+      <div className="grid w-full grid-cols-1 gap-5 py-20 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {data.cars.map((c) => (
           <CarAnalyticsCard car={c} key={c.id} />
         ))}

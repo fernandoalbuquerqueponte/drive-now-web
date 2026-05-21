@@ -131,41 +131,124 @@ function EditCarForm({
   }
 
   return (
-    <div>
-      <Dialog
-        open={isOpen}
-        onOpenChange={(open) => {
-          setIsOpen(open);
-          if (!open) {
-            form.reset();
-          }
-        }}
-      >
-        <DialogTrigger asChild></DialogTrigger>
-        <DialogContent className="max-w-2xl!">
-          <DialogHeader>
-            <DialogTitle>{carId ? "Editar carro" : "Criar carro"}</DialogTitle>
-            <DialogDescription>Insira as informações abaixo</DialogDescription>
-          </DialogHeader>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) {
+          form.reset();
+        }
+      }}
+    >
+      <DialogTrigger asChild></DialogTrigger>
+      <DialogContent className="max-w-2xl!">
+        <DialogHeader>
+          <DialogTitle>{carId ? "Editar carro" : "Criar carro"}</DialogTitle>
+          <DialogDescription>Insira as informações abaixo</DialogDescription>
+        </DialogHeader>
 
-          <ScrollArea className="-mr-3 max-h-[70vh] pr-3">
-            <form
-              id="car-form"
-              onSubmit={form.handleSubmit(onSubmit, (errors) =>
-                console.log("O formulário está inválido!", errors),
+        <ScrollArea className="-mr-3 max-h-[70vh] pr-3">
+          <form
+            id="car-form"
+            onSubmit={form.handleSubmit(onSubmit, (errors) =>
+              console.log("O formulário está inválido!", errors),
+            )}
+            className="space-y-8"
+          >
+            <Controller
+              name="brand"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Marca</FieldLabel>
+                  <Input {...field} id={field.name} placeholder="Ex: Porsche" />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
-              className="space-y-8"
-            >
+            />
+
+            <Controller
+              name="model"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Modelo</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    placeholder="Ex: 911 Carrera"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              name="category"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Categoria</FieldLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      className="w-full"
+                      id={field.name}
+                      ref={field.ref}
+                    >
+                      <SelectValue placeholder="Selecione a categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CAR_CATEGORIES.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <CarImageInput control={form.control} />
+
+            <Controller
+              name="description"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Descrição</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    placeholder="Digite os detalhes do veículo..."
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
               <Controller
-                name="brand"
+                name="year"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Marca</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Ano</FieldLabel>
                     <Input
+                      type="number"
                       {...field}
+                      value={(field.value as number) ?? ""}
                       id={field.name}
-                      placeholder="Ex: Porsche"
+                      placeholder="Ex: 2026"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -175,15 +258,20 @@ function EditCarForm({
               />
 
               <Controller
-                name="model"
+                name="pricePerHour"
                 control={form.control}
-                render={({ field, fieldState }) => (
+                render={({ field: { value, ...restField }, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Modelo</FieldLabel>
+                    <FieldLabel htmlFor={restField.name}>
+                      Preço por Hora
+                    </FieldLabel>
                     <Input
-                      {...field}
-                      id={field.name}
-                      placeholder="Ex: 911 Carrera"
+                      {...restField}
+                      value={(value as number) ?? ""}
+                      type="number"
+                      step="0.01"
+                      id={restField.name}
+                      placeholder="Ex: 150"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -191,93 +279,31 @@ function EditCarForm({
                   </Field>
                 )}
               />
+            </div>
 
-              <Controller
-                name="category"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Categoria</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger
-                        className="w-full"
-                        id={field.name}
-                        ref={field.ref}
-                      >
-                        <SelectValue placeholder="Selecione a categoria" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CAR_CATEGORIES.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+            <CarGalleryInput control={form.control} />
 
-              <CarImageInput control={form.control} />
-
-              <Controller
-                name="description"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Descrição</FieldLabel>
-                    <Input
-                      {...field}
-                      id={field.name}
-                      placeholder="Digite os detalhes do veículo..."
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
+            {specFields.map((fieldItem, index) => (
+              <div key={fieldItem.id} className="flex w-full items-end gap-3">
                 <Controller
-                  name="year"
+                  name={`specifications.${index}.value` as const}
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>Ano</FieldLabel>
-                      <Input
-                        type="number"
-                        {...field}
-                        value={(field.value as number) ?? ""}
-                        id={field.name}
-                        placeholder="Ex: 2026"
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
+                    <Field data-invalid={fieldState.invalid} className="grow">
+                      <FieldLabel>{fieldItem.label}</FieldLabel>
 
-                <Controller
-                  name="pricePerHour"
-                  control={form.control}
-                  render={({ field: { value, ...restField }, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={restField.name}>
-                        Preço por Hora
-                      </FieldLabel>
-                      <Input
-                        {...restField}
-                        value={(value as number) ?? ""}
-                        type="number"
-                        step="0.01"
-                        id={restField.name}
-                        placeholder="Ex: 150"
-                      />
+                      <div className="flex items-center gap-2">
+                        <Input
+                          {...field}
+                          id={field.name}
+                          placeholder={
+                            fieldItem.label
+                              ? `Digite o/a ${fieldItem.label.toLowerCase()}...`
+                              : "Digite o valor..."
+                          }
+                        />
+                      </div>
+
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
                       )}
@@ -285,116 +311,82 @@ function EditCarForm({
                   )}
                 />
               </div>
+            ))}
 
-              <CarGalleryInput control={form.control} />
-
-              {specFields.map((fieldItem, index) => (
-                <div key={fieldItem.id} className="flex w-full items-end gap-3">
-                  <Controller
-                    name={`specifications.${index}.value` as const}
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid} className="grow">
-                        <FieldLabel>{fieldItem.label}</FieldLabel>
-
-                        <div className="flex items-center gap-2">
-                          <Input
-                            {...field}
-                            id={field.name}
-                            placeholder={
-                              fieldItem.label
-                                ? `Digite o/a ${fieldItem.label.toLowerCase()}...`
-                                : "Digite o valor..."
-                            }
-                          />
-                        </div>
-
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
-                </div>
-              ))}
-
-              <Controller
-                name="features"
-                control={form.control}
-                render={({ field, fieldState }) => {
-                  return (
-                    <Field
-                      data-invalid={fieldState.invalid}
-                      className="space-y-2"
+            <Controller
+              name="features"
+              control={form.control}
+              render={({ field, fieldState }) => {
+                return (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="space-y-2"
+                  >
+                    <FieldLabel>Características Adicionais</FieldLabel>
+                    <Combobox
+                      multiple
+                      autoHighlight
+                      items={carFeatures}
+                      value={field.value}
+                      onValueChange={(newValues) => {
+                        field.onChange(newValues);
+                      }}
                     >
-                      <FieldLabel>Características Adicionais</FieldLabel>
-                      <Combobox
-                        multiple
-                        autoHighlight
-                        items={carFeatures}
-                        value={field.value}
-                        onValueChange={(newValues) => {
-                          field.onChange(newValues);
-                        }}
-                      >
-                        <ComboboxChips ref={anchor} className="w-full">
-                          <ComboboxValue>
-                            {(values) => (
-                              <React.Fragment>
-                                {values.map((value: string) => (
-                                  <ComboboxChip key={value}>
-                                    {value}
-                                  </ComboboxChip>
-                                ))}
-                                <ComboboxChipsInput />
-                              </React.Fragment>
-                            )}
-                          </ComboboxValue>
-                        </ComboboxChips>
-                        <ComboboxContent anchor={anchor}>
-                          <ComboboxEmpty>
-                            Nenhuma especificação encontrada
-                          </ComboboxEmpty>
-                          <ComboboxList>
-                            {(item) => (
-                              <ComboboxItem key={item} value={item}>
-                                {item}
-                              </ComboboxItem>
-                            )}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
+                      <ComboboxChips ref={anchor} className="w-full">
+                        <ComboboxValue>
+                          {(values) => (
+                            <React.Fragment>
+                              {values.map((value: string) => (
+                                <ComboboxChip key={value}>{value}</ComboboxChip>
+                              ))}
+                              <ComboboxChipsInput />
+                            </React.Fragment>
+                          )}
+                        </ComboboxValue>
+                      </ComboboxChips>
+                      <ComboboxContent anchor={anchor}>
+                        <ComboboxEmpty>
+                          Nenhuma especificação encontrada
+                        </ComboboxEmpty>
+                        <ComboboxList>
+                          {(item) => (
+                            <ComboboxItem key={item} value={item}>
+                              {item}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
 
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  );
-                }}
-              />
-            </form>
-          </ScrollArea>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancelar
-              </Button>
-            </DialogClose>
-            <Button form="car-form" type="submit" disabled={isPending}>
-              {isPending || isUpdatePending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                </>
-              ) : carId ? (
-                "Salvar alterações"
-              ) : (
-                "Criar veículo"
-              )}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
+          </form>
+        </ScrollArea>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" variant="outline">
+              Cancelar
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+          </DialogClose>
+          <Button form="car-form" type="submit" disabled={isPending}>
+            {isPending || isUpdatePending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              </>
+            ) : carId ? (
+              "Salvar alterações"
+            ) : (
+              "Criar veículo"
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

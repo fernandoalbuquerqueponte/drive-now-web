@@ -25,7 +25,7 @@ function CarStats({ cars }: CarStatsProps) {
   }, [cars]);
 
   return (
-    <div className="flex w-full items-center gap-5">
+    <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       <StatCard
         label="Total de veículos"
         value={cars.length}
