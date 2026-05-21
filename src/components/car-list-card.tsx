@@ -1,10 +1,8 @@
-import { ArrowRight, Car, TrendingUpIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Car, TrendingUpIcon } from "lucide-react";
 
 import type { Car as CarInterface } from "@/http/types/use-edit-user-profile-response";
 
 import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 
 function CarListCard({ car }: { car: CarInterface }) {
@@ -14,15 +12,23 @@ function CarListCard({ car }: { car: CarInterface }) {
 
   return (
     <Card>
-      <CardContent className="flex w-full items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img src={car.image} alt={car.brand} className="w-35 rounded-lg" />
+      <CardContent className="flex h-26 w-full items-center">
+        <div className="flex h-full items-center gap-3">
+          <div className="h-full w-44 shrink-0">
+            <img
+              src={car.image}
+              alt={car.brand}
+              className="h-full w-full rounded-md object-cover"
+            />
+          </div>
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold">
-                {car.brand} {car.model}
-              </h1>
+            <div className="flex flex-col gap-2">
               <Badge>{car.available ? "Disponível" : "Alugado"}</Badge>
+              <div className="flex items-center gap-2">
+                <h4 className="truncate text-lg font-bold">
+                  {car.brand} {car.model}
+                </h4>
+              </div>
             </div>
             <h3 className="text-muted-foreground text-sm">
               {Number(car.pricePerHour).toLocaleString("pt-BR", {
@@ -48,11 +54,6 @@ function CarListCard({ car }: { car: CarInterface }) {
             </div>
           </div>
         </div>
-        <Link to="/my-cars">
-          <Button variant="ghost" size="icon">
-            <ArrowRight />
-          </Button>
-        </Link>
       </CardContent>
     </Card>
   );
