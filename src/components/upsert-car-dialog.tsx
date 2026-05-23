@@ -7,6 +7,7 @@ import {
   useFieldArray,
   useForm,
 } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
 
 import {
   Combobox,
@@ -260,19 +261,30 @@ function EditCarForm({
               <Controller
                 name="pricePerHour"
                 control={form.control}
-                render={({ field: { value, ...restField }, fieldState }) => (
+                render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={restField.name}>
+                    <FieldLabel htmlFor="pricePerHour">
                       Preço por Hora
                     </FieldLabel>
-                    <Input
-                      {...restField}
-                      value={(value as number) ?? ""}
-                      type="number"
-                      step="0.01"
-                      id={restField.name}
-                      placeholder="Ex: 150"
+
+                    <NumericFormat
+                      id="pricePerHour"
+                      name={field.name}
+                      value={field.value ?? ""}
+                      onBlur={field.onBlur}
+                      getInputRef={field.ref}
+                      customInput={Input}
+                      placeholder="R$ 0,00"
+                      decimalScale={2}
+                      decimalSeparator=","
+                      thousandSeparator="."
+                      prefix="R$ "
+                      allowNegative={false}
+                      onValueChange={(values) => {
+                        field.onChange(values.floatValue ?? 0);
+                      }}
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
