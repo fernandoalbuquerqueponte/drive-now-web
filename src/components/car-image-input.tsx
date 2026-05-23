@@ -1,69 +1,98 @@
-import { Pencil, Plus } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { type Control, Controller, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
-import { type CarFormSchema } from "@/schemas/car-form-schema";
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+  FileUploadTrigger,
+} from "@/components/ui/file-upload";
+import type { CarFormSchema } from "@/schemas/car-form-schema";
 
-import { Field, FieldError, FieldLabel } from "../components/ui/field";
-import { Input } from "../components/ui/input";
+import { Button } from "./ui/button";
+import { Field, FieldError, FieldLabel } from "./ui/field";
 
 export function CarImageInput({
   control,
 }: {
   control: Control<CarFormSchema>;
 }) {
-  const watchedImage = useWatch({ control, name: "image" });
+  const imageValue = useWatch({ control, name: "image" });
+
+  const files: File[] = useMemo(() => {
+    if (!imageValue) return [];
+    if (imageValue instanceof File) return [imageValue];
+    if (Array.isArray(imageValue)) return imageValue;
+    return [];
+  }, [imageValue]);
+
+  const onFileReject = useCallback((file: File, message: string) => {
+    toast(message, {
+      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+    });
+  }, []);
 
   return (
     <Controller
       name="image"
       control={control}
-      render={({ field: { onChange, onBlur, name, ref }, fieldState }) => (
-        <Field data-invalid={fieldState.invalid} className="space-y-2">
-          <FieldLabel className="text-muted-foreground text-xs font-medium">
-            Imagem Principal
-          </FieldLabel>
-          <Input
-            id="image-file"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            name={name}
-            onBlur={onBlur}
-            ref={ref}
-            onChange={(e) => onChange(e.target.files?.[0])}
-          />
-          <label
-            htmlFor="image-file"
-            className="group relative block aspect-video w-full max-w-75 cursor-pointer overflow-hidden rounded-lg border border-slate-800 bg-slate-900/50 transition-all hover:border-slate-700"
-          >
-            {watchedImage ? (
-              <div>
-                <img
-                  src={
-                    watchedImage instanceof File
-                      ? URL.createObjectURL(watchedImage)
-                      : watchedImage
-                  }
-                  alt="Preview principal"
-                  className="relative h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
-                />
-
-                <div className="absolute top-2 right-2 z-10">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-800 bg-slate-950/80 text-slate-400 shadow-md backdrop-blur-sm transition-all hover:bg-slate-900 hover:text-slate-200">
-                    <Pencil className="h-3.5 w-3.5" />
-                  </span>
+      render={({ field: { onChange }, fieldState }) => {
+        return (
+          <Field data-invalid={fieldState.invalid} className="space-y-2">
+            <FieldLabel>Imagem principal</FieldLabel>
+            <FileUpload
+              maxFiles={1}
+              maxSize={3 * 1024 * 1024}
+              className="w-full"
+              value={files}
+              onValueChange={(newFiles) => {
+                onChange(newFiles && newFiles.length > 0 ? newFiles[0] : null);
+              }}
+              onFileReject={onFileReject}
+            >
+              <FileUploadDropzone>
+                <div className="flex flex-col items-center gap-1 text-center">
+                  <div className="flex items-center justify-center rounded-full border p-2.5">
+                    <Upload className="text-muted-foreground size-6" />
+                  </div>
+                  <p className="text-sm font-medium">Jogue os arquivos aqui</p>
+                  <p className="text-muted-foreground text-xs">
+                    Ou clique para selecionar arquivos (máx. 1 arquivos, 3MB
+                    cada)
+                  </p>
                 </div>
-              </div>
-            ) : (
-              <div className="text-muted-foreground flex h-full flex-col items-center justify-center gap-2 py-6 text-xs">
-                <Plus className="h-5 w-5 text-slate-500" />
-                <span>Selecionar imagem</span>
-              </div>
-            )}
-          </label>
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-        </Field>
-      )}
+                <FileUploadTrigger asChild>
+                  <Button variant="outline" size="sm" className="mt-2 w-fit">
+                    Escolher arquivos
+                  </Button>
+                </FileUploadTrigger>
+              </FileUploadDropzone>
+
+              <FileUploadList>
+                {files.map((file, index) => (
+                  <FileUploadItem key={index} value={file}>
+                    <FileUploadItemPreview />
+                    <FileUploadItemMetadata />
+                    <FileUploadItemDelete asChild>
+                      <Button variant="ghost" size="icon" className="size-7">
+                        <X />
+                      </Button>
+                    </FileUploadItemDelete>
+                  </FileUploadItem>
+                ))}
+              </FileUploadList>
+            </FileUpload>
+
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        );
+      }}
     />
   );
 }

@@ -1,87 +1,98 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { useCallback, useMemo } from "react";
 import { type Control, Controller, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+  FileUploadTrigger,
+} from "@/components/ui/file-upload";
 import type { CarFormSchema } from "@/schemas/car-form-schema";
 
 import { Button } from "./ui/button";
 import { Field, FieldError, FieldLabel } from "./ui/field";
-import { Input } from "./ui/input";
 
 export function CarGalleryInput({
   control,
 }: {
   control: Control<CarFormSchema>;
 }) {
-  const watchedGallery = useWatch({ control, name: "gallery" });
+  const galleryValue = useWatch({ control, name: "gallery" });
 
-  const currentGalleryItems =
-    watchedGallery instanceof FileList
-      ? Array.from(watchedGallery)
-      : Array.isArray(watchedGallery)
-        ? watchedGallery
-        : [];
+  const files: File[] = useMemo(() => {
+    if (!galleryValue) return [];
+    if (galleryValue instanceof FileList) return Array.from(galleryValue);
+    if (Array.isArray(galleryValue)) return galleryValue;
+    return [];
+  }, [galleryValue]);
 
-  const galleryImages = currentGalleryItems.map((item) =>
-    item instanceof File ? URL.createObjectURL(item) : item,
-  );
+  const onFileReject = useCallback((file: File, message: string) => {
+    toast(message, {
+      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+    });
+  }, []);
 
   return (
     <Controller
       name="gallery"
       control={control}
-      render={({ field: { onChange, onBlur, name, ref }, fieldState }) => (
-        <Field data-invalid={fieldState.invalid} className="space-y-2">
-          <FieldLabel>Galeria de Fotos ({galleryImages.length})</FieldLabel>
-          <Input
-            id="gallery-file"
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            name={name}
-            onBlur={onBlur}
-            ref={ref}
-            onChange={(e) => onChange(e.target.files)}
-          />
-          <div className="grid max-w-75 min-w-75 grid-cols-4 gap-2">
-            {galleryImages.map((url, i) => (
-              <div
-                key={url}
-                className="relative aspect-square w-full overflow-hidden rounded-lg border border-slate-800 bg-slate-900/50"
-              >
-                <div className="text-destructive hover:bg-destructive/10 absolute top-1 right-1 z-10">
-                  <Button
-                    variant="destructive"
-                    type="button"
-                    size="icon-xs"
-                    className="h-6 px-2 text-xs"
-                    onClick={() =>
-                      onChange(
-                        currentGalleryItems.filter((_, index) => index !== i),
-                      )
-                    }
-                  >
-                    <Trash2 />
-                  </Button>
-                </div>
-                <img
-                  src={url}
-                  alt={`Preview ${i}`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            ))}
-            <label
-              htmlFor="gallery-file"
-              className="text-muted-foreground flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-slate-700 bg-slate-900/60 text-[11px] font-medium transition-colors hover:border-slate-500"
+      render={({ field: { onChange }, fieldState }) => {
+        return (
+          <Field data-invalid={fieldState.invalid} className="space-y-2">
+            <FieldLabel>Galeria de Fotos</FieldLabel>
+
+            <FileUpload
+              maxFiles={4}
+              maxSize={3 * 1024 * 1024}
+              className="w-full"
+              value={files}
+              onValueChange={onChange}
+              onFileReject={onFileReject}
+              multiple
             >
-              <Plus className="h-4 w-4 text-slate-400" />
-              <span>Adicionar</span>
-            </label>
-          </div>
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-        </Field>
-      )}
+              <FileUploadDropzone>
+                <div className="flex flex-col items-center gap-1 text-center">
+                  <div className="flex items-center justify-center rounded-full border p-2.5">
+                    <Upload className="text-muted-foreground size-6" />
+                  </div>
+                  <p className="text-sm font-medium">Jogue os arquivos aqui</p>
+                  <p className="text-muted-foreground text-xs">
+                    Ou clique para selecionar arquivos (máx. 4 arquivos, 3MB
+                    cada)
+                  </p>
+                </div>
+                <FileUploadTrigger asChild>
+                  <Button variant="outline" size="sm" className="mt-2 w-fit">
+                    Escolher arquivos
+                  </Button>
+                </FileUploadTrigger>
+              </FileUploadDropzone>
+
+              <FileUploadList>
+                {files.map((file, index) => (
+                  <FileUploadItem key={index} value={file}>
+                    <FileUploadItemPreview />
+                    <FileUploadItemMetadata />
+                    <FileUploadItemDelete asChild>
+                      <Button variant="ghost" size="icon" className="size-7">
+                        <X />
+                      </Button>
+                    </FileUploadItemDelete>
+                  </FileUploadItem>
+                ))}
+              </FileUploadList>
+            </FileUpload>
+
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        );
+      }}
     />
   );
 }
