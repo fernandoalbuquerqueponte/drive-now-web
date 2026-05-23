@@ -42,7 +42,7 @@ function LoginForm() {
     <div>
       <Card>
         <CardHeader className="py-2">
-          <h2 className="text-lg">Login</h2>
+          <h2 className="text-lg font-bold">Login</h2>
           <p className="text-muted-foreground">Faça login para continuar.</p>
         </CardHeader>
         <CardContent className="pb-4">

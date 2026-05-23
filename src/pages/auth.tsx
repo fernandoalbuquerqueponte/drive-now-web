@@ -5,8 +5,6 @@ import LoginForm from "@/components/login-form";
 import SignUpForm from "@/components/sign-up-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import icon from "../assets/icon-removebg-preview.png";
-
 function Authentication() {
   const navigate = useNavigate();
 
@@ -19,8 +17,6 @@ function Authentication() {
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-3 px-6">
-      <img src={icon} alt="icone" className="h-65 w-auto object-contain" />
-
       <Tabs defaultValue="login" className="w-full max-w-100">
         <TabsList className="grid w-full grid-cols-2" variant="line">
           <TabsTrigger value="create-account">Criar Conta</TabsTrigger>
