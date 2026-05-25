@@ -142,7 +142,7 @@ function EditCarForm({
       }}
     >
       <DialogTrigger asChild></DialogTrigger>
-      <DialogContent className="max-w-2xl!">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-2xl rounded-lg p-6 sm:w-full">
         <DialogHeader>
           <DialogTitle>{carId ? "Editar carro" : "Criar carro"}</DialogTitle>
           <DialogDescription>Insira as informações abaixo</DialogDescription>
@@ -154,7 +154,7 @@ function EditCarForm({
             onSubmit={form.handleSubmit(onSubmit, (errors) =>
               console.log("O formulário está inválido!", errors),
             )}
-            className="space-y-8"
+            className="space-y-8 px-4"
           >
             <Controller
               name="brand"
