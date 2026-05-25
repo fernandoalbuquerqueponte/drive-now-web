@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { api } from "./api-client";
 
-type EditUserProfileInput = FormData | Record<string, any>;
+type EditUserProfileInput = FormData | Record<string, unknown>;
 
 export function useEditUserProfile() {
   const queryClient = useQueryClient();

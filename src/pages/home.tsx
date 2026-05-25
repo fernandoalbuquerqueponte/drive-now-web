@@ -12,25 +12,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useCars } from "@/http/use-cars";
 import { cn } from "@/lib/utils";
 
-export interface CarSpecification {
-  label: string;
-  value: string;
-}
 
-export interface Car {
-  id: string;
-  brand: string;
-  model: string;
-  category: string;
-  image: string;
-  gallery: string[];
-  year: number;
-  pricePerHour: number;
-  description: string;
-  available: boolean;
-  specifications: CarSpecification[];
-  features: string[];
-}
 
 function HomePage() {
   const [filters, setFilters] = useQueryStates(
@@ -143,7 +125,7 @@ function HomePage() {
               <Spinner className="size-5" />
             </div>
           ) : (
-            data?.map((item: Car) => <CarCard key={item.id} item={item} />)
+            data?.map((item) => <CarCard key={item.id} item={item} />)
           )}
         </div>
       </div>

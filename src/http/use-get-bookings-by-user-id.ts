@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import type { Car } from "@/pages/home";
+import type { Car } from "@/types/car";
 
 import { api } from "./api-client";
 
