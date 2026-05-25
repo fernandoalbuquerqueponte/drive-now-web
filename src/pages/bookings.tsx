@@ -13,7 +13,7 @@ function BookingsPage() {
     <>
       <div className="w-full border-b bg-zinc-900/50">
         <div className="container mx-auto flex flex-col justify-items-start space-y-7 py-16 pt-16">
-          <div className="space-y-3">
+          <div className="space-y-3 px-6">
             <h2 className="text-4xl font-bold">Minhas reservas</h2>
             <p className="text-muted-foreground">
               Acompanhe e gerencie todas as suas reservas de veículos
@@ -24,7 +24,7 @@ function BookingsPage() {
         </div>
       </div>
       <div className="container mx-auto py-16">
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center px-4">
           <CarBookingTabs bookings={bookings} />
         </div>
       </div>

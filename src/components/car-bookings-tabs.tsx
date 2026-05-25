@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import BookingCard, { type BookingStatus } from "@/components/booking-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Car as CarInterface } from "@/pages/home";
+import type { Car as CarInterface } from "@/types/car";
 
 import { Button } from "./ui/button";
 import {

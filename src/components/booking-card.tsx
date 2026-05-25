@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { ArrowRightIcon, Calendar, CircleDollarSign } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import type { Car } from "@/pages/home";
+import type { Car } from "@/types/car";
 
 import BookingDetails from "./booking-details";
 import { Badge } from "./ui/badge";
@@ -44,7 +44,7 @@ function BookingCard({ booking }: BookingCardProps) {
               <img
                 src={booking.car.image}
                 alt="carro"
-                className="w-30 rounded-md"
+                className="w-30 rounded-md object-cover"
               />
 
               <div className="flex flex-col gap-2">

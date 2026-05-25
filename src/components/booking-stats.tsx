@@ -40,7 +40,7 @@ function BookingStats({ bookings }: BookingStatsProps) {
   }, [bookings]);
 
   return (
-    <div className="flex w-full items-center justify-center gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full items-center justify-center gap-4 px-5">
       <StatCard
         label="Total de reservas"
         value={stats.totalBookings}
